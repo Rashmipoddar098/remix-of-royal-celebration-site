@@ -229,21 +229,30 @@ export function CelebrationJourney() {
       <div className="relative mx-auto max-w-6xl">
         {/* Header */}
         <div className="text-center">
-          <div className="inline-flex items-center gap-3">
+          <div className="inline-flex items-center gap-3 animate-fade-up">
             <span className="h-px w-10 bg-gold/60 sm:w-16" />
-            <p className="font-serif-elegant text-xs uppercase tracking-[0.4em] text-gold-deep sm:text-sm">
+            <p className="font-serif-elegant text-xs uppercase tracking-[0.4em] text-shimmer-gold sm:text-sm">
               Six Sacred Chapters
             </p>
             <span className="h-px w-10 bg-gold/60 sm:w-16" />
           </div>
 
-          <h2 className="mt-4 font-display text-4xl leading-tight text-maroon sm:text-5xl md:text-6xl">
-            <span className="text-gradient-royal">Celebration Journey</span>
+          <h2
+            className="mt-4 font-display text-4xl leading-tight sm:text-5xl md:text-6xl animate-letter-rise"
+            style={{ animationDelay: "200ms" }}
+          >
+            <span className="text-shimmer-royal animate-text-glow">Celebration Journey</span>
           </h2>
-          <p className="mx-auto mt-3 max-w-xl font-script text-3xl text-gold-deep sm:text-4xl">
+          <p
+            className="mx-auto mt-3 max-w-xl font-script text-3xl text-gold-deep sm:text-4xl animate-script-draw animate-text-glow"
+            style={{ animationDelay: "500ms" }}
+          >
             Every ritual a verse in our story
           </p>
-          <p className="mx-auto mt-3 max-w-lg font-serif-elegant italic text-muted-foreground text-sm sm:text-base">
+          <p
+            className="mx-auto mt-3 max-w-lg font-serif-elegant italic text-muted-foreground text-sm sm:text-base animate-fade-up"
+            style={{ animationDelay: "750ms" }}
+          >
             From the first promise to the final celebration — we invite you to walk this sacred path with us.
           </p>
         </div>
