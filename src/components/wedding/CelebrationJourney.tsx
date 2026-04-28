@@ -125,21 +125,21 @@ function EventCard({ event, index, isLast }: { event: WeddingEvent; index: numbe
             <div className="absolute inset-x-6 bottom-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
 
             <dl className={`grid grid-cols-2 gap-x-4 gap-y-4 font-serif-elegant text-maroon/90 text-left sm:gap-x-6 text-stagger ${visible ? "is-visible" : ""}`}>
-              <div>
-                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep">Date</dt>
-                <dd className="mt-1 text-base sm:text-lg">{event.date}</dd>
+              <div className="group-text-hover">
+                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep text-hover-track cursor-default">Date</dt>
+                <dd className="mt-1 text-base sm:text-lg group-text-target">{event.date}</dd>
               </div>
-              <div>
-                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep">Time</dt>
-                <dd className="mt-1 text-base sm:text-lg">{event.time}</dd>
+              <div className="group-text-hover">
+                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep text-hover-track cursor-default">Time</dt>
+                <dd className="mt-1 text-base sm:text-lg group-text-target">{event.time}</dd>
               </div>
-              <div className="col-span-2">
-                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep">Dress Code</dt>
-                <dd className="mt-1 text-base sm:text-lg">{event.dress}</dd>
+              <div className="col-span-2 group-text-hover">
+                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep text-hover-track cursor-default">Dress Code</dt>
+                <dd className="mt-1 text-base sm:text-lg group-text-target">{event.dress}</dd>
               </div>
-              <div className="col-span-2">
-                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep">Venue</dt>
-                <dd className="mt-1 text-base leading-snug sm:text-lg">{event.venue}</dd>
+              <div className="col-span-2 group-text-hover">
+                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep text-hover-track cursor-default">Venue</dt>
+                <dd className="mt-1 text-base leading-snug sm:text-lg group-text-target">{event.venue}</dd>
               </div>
             </dl>
           </div>
