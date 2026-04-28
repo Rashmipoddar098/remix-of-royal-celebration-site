@@ -78,12 +78,10 @@ function EventCard({ event, index, isLast }: { event: WeddingEvent; index: numbe
             </span>
           </div>
 
-          {/* Chapter badge */}
-          <div className="absolute -top-5 left-1/2 -translate-x-1/2">
-            <span className={`inline-flex items-center gap-2 rounded-full bg-gradient-to-r ${styles.badge} px-4 py-1.5 font-display text-[10px] uppercase tracking-[0.32em] text-ivory shadow-gold sm:text-xs`}>
-              <span aria-hidden>✦</span>
-              Chapter {String(index + 1).padStart(2, "0")}
-              <span aria-hidden>✦</span>
+          {/* Decorative ornament badge */}
+          <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+            <span className={`inline-flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-r ${styles.badge} text-ivory shadow-gold ring-2 ring-ivory sm:h-10 sm:w-10`}>
+              <span aria-hidden className="font-script text-lg sm:text-xl">✦</span>
             </span>
           </div>
         </div>
