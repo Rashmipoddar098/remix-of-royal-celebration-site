@@ -91,7 +91,7 @@ function EventCard({ event, index, isLast }: { event: WeddingEvent; index: numbe
           <div className={`inline-flex items-center gap-2 self-start ${isReverse ? "lg:self-end" : ""}`}>
             <span className={`h-1.5 w-1.5 rounded-full ${styles.dot} ${visible ? "animate-char-pop" : "opacity-0"}`} />
             <span
-              className={`inline-block rounded-full px-3 py-1 font-display text-[10px] uppercase tracking-[0.3em] ${styles.chip} ${visible ? "animate-word-slide" : "opacity-0"}`}
+              className={`inline-block rounded-full px-3 py-1 font-display text-[10px] uppercase tracking-[0.3em] text-hover-track cursor-default ${styles.chip} ${visible ? "animate-word-slide" : "opacity-0"}`}
               style={{ animationDelay: "120ms" }}
             >
               {event.day}
@@ -102,10 +102,10 @@ function EventCard({ event, index, isLast }: { event: WeddingEvent; index: numbe
             className={`mt-3 font-display text-3xl sm:text-4xl md:text-5xl ${visible ? "animate-letter-rise" : "opacity-0"}`}
             style={{ animationDelay: "240ms" }}
           >
-            <span className="text-shimmer-royal">{event.name}</span>
+            <span className="text-shimmer-royal text-hover-shimmer cursor-default">{event.name}</span>
           </h3>
           <p
-            className={`mt-2 font-script text-3xl leading-tight text-gold-deep sm:text-4xl ${visible ? "animate-script-draw animate-text-glow" : "opacity-0"}`}
+            className={`mt-2 font-script text-3xl leading-tight text-gold-deep sm:text-4xl text-hover-script cursor-default ${visible ? "animate-script-draw animate-text-glow" : "opacity-0"}`}
             style={{ animationDelay: "420ms" }}
           >
             {event.meaning}
@@ -125,21 +125,21 @@ function EventCard({ event, index, isLast }: { event: WeddingEvent; index: numbe
             <div className="absolute inset-x-6 bottom-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
 
             <dl className={`grid grid-cols-2 gap-x-4 gap-y-4 font-serif-elegant text-maroon/90 text-left sm:gap-x-6 text-stagger ${visible ? "is-visible" : ""}`}>
-              <div>
-                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep">Date</dt>
-                <dd className="mt-1 text-base sm:text-lg">{event.date}</dd>
+              <div className="group-text-hover">
+                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep text-hover-track cursor-default">Date</dt>
+                <dd className="mt-1 text-base sm:text-lg group-text-target">{event.date}</dd>
               </div>
-              <div>
-                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep">Time</dt>
-                <dd className="mt-1 text-base sm:text-lg">{event.time}</dd>
+              <div className="group-text-hover">
+                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep text-hover-track cursor-default">Time</dt>
+                <dd className="mt-1 text-base sm:text-lg group-text-target">{event.time}</dd>
               </div>
-              <div className="col-span-2">
-                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep">Dress Code</dt>
-                <dd className="mt-1 text-base sm:text-lg">{event.dress}</dd>
+              <div className="col-span-2 group-text-hover">
+                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep text-hover-track cursor-default">Dress Code</dt>
+                <dd className="mt-1 text-base sm:text-lg group-text-target">{event.dress}</dd>
               </div>
-              <div className="col-span-2">
-                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep">Venue</dt>
-                <dd className="mt-1 text-base leading-snug sm:text-lg">{event.venue}</dd>
+              <div className="col-span-2 group-text-hover">
+                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep text-hover-track cursor-default">Venue</dt>
+                <dd className="mt-1 text-base leading-snug sm:text-lg group-text-target">{event.venue}</dd>
               </div>
             </dl>
           </div>
@@ -231,7 +231,7 @@ export function CelebrationJourney() {
         <div className="text-center">
           <div className="inline-flex items-center gap-3 animate-fade-up">
             <span className="h-px w-10 bg-gold/60 sm:w-16" />
-            <p className="font-serif-elegant text-xs uppercase tracking-[0.4em] text-shimmer-gold sm:text-sm">
+            <p className="font-serif-elegant text-xs uppercase tracking-[0.4em] text-shimmer-gold text-hover-track cursor-default sm:text-sm">
               Six Sacred Chapters
             </p>
             <span className="h-px w-10 bg-gold/60 sm:w-16" />
@@ -241,16 +241,16 @@ export function CelebrationJourney() {
             className="mt-4 font-display text-4xl leading-tight sm:text-5xl md:text-6xl animate-letter-rise"
             style={{ animationDelay: "200ms" }}
           >
-            <span className="text-shimmer-royal animate-text-glow">Celebration Journey</span>
+            <span className="text-shimmer-royal animate-text-glow text-hover-shimmer cursor-default">Celebration Journey</span>
           </h2>
           <p
-            className="mx-auto mt-3 max-w-xl font-script text-3xl text-gold-deep sm:text-4xl animate-script-draw animate-text-glow"
+            className="mx-auto mt-3 max-w-xl font-script text-3xl text-gold-deep sm:text-4xl animate-script-draw animate-text-glow text-hover-script cursor-default"
             style={{ animationDelay: "500ms" }}
           >
             Every ritual a verse in our story
           </p>
           <p
-            className="mx-auto mt-3 max-w-lg font-serif-elegant italic text-muted-foreground text-sm sm:text-base animate-fade-up"
+            className="mx-auto mt-3 max-w-lg font-serif-elegant italic text-muted-foreground text-sm sm:text-base animate-fade-up text-hover-glow cursor-default"
             style={{ animationDelay: "750ms" }}
           >
             From the first promise to the final celebration — we invite you to walk this sacred path with us.
@@ -282,10 +282,10 @@ export function CelebrationJourney() {
         <div className="mt-20 text-center">
           <div className="mx-auto inline-flex items-center gap-3">
             <span className="h-px w-12 bg-gold/60" />
-            <span className="font-script text-4xl text-shimmer-gold animate-text-glow animate-float-soft inline-block">श्री</span>
+            <span className="font-script text-4xl text-shimmer-gold animate-text-glow animate-float-soft text-hover-script cursor-default inline-block">श्री</span>
             <span className="h-px w-12 bg-gold/60" />
           </div>
-          <p className="mt-3 font-serif-elegant italic text-muted-foreground text-sm sm:text-base animate-fade-up">
+          <p className="mt-3 font-serif-elegant italic text-muted-foreground text-sm sm:text-base animate-fade-up text-hover-glow cursor-default">
             We await your presence to bless this journey.
           </p>
         </div>
