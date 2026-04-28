@@ -89,20 +89,32 @@ function EventCard({ event, index, isLast }: { event: WeddingEvent; index: numbe
         {/* Content */}
         <div className={`flex flex-col ${isReverse ? "lg:items-end lg:text-right" : ""}`}>
           <div className={`inline-flex items-center gap-2 self-start ${isReverse ? "lg:self-end" : ""}`}>
-            <span className={`h-1.5 w-1.5 rounded-full ${styles.dot}`} />
-            <span className={`inline-block rounded-full px-3 py-1 font-display text-[10px] uppercase tracking-[0.3em] ${styles.chip}`}>
+            <span className={`h-1.5 w-1.5 rounded-full ${styles.dot} ${visible ? "animate-char-pop" : "opacity-0"}`} />
+            <span
+              className={`inline-block rounded-full px-3 py-1 font-display text-[10px] uppercase tracking-[0.3em] ${styles.chip} ${visible ? "animate-word-slide" : "opacity-0"}`}
+              style={{ animationDelay: "120ms" }}
+            >
               {event.day}
             </span>
           </div>
 
-          <h3 className="mt-3 font-display text-3xl text-maroon sm:text-4xl md:text-5xl">
-            {event.name}
+          <h3
+            className={`mt-3 font-display text-3xl sm:text-4xl md:text-5xl ${visible ? "animate-letter-rise" : "opacity-0"}`}
+            style={{ animationDelay: "240ms" }}
+          >
+            <span className="text-shimmer-royal">{event.name}</span>
           </h3>
-          <p className="mt-2 font-script text-3xl leading-tight text-gold-deep sm:text-4xl">
+          <p
+            className={`mt-2 font-script text-3xl leading-tight text-gold-deep sm:text-4xl ${visible ? "animate-script-draw animate-text-glow" : "opacity-0"}`}
+            style={{ animationDelay: "420ms" }}
+          >
             {event.meaning}
           </p>
 
-          <div className={`mt-5 gold-divider w-24 ${isReverse ? "lg:ml-auto" : ""}`} />
+          <div
+            className={`mt-5 gold-divider w-24 ${isReverse ? "lg:ml-auto" : ""} ${visible ? "animate-underline-grow" : "opacity-0"}`}
+            style={{ transformOrigin: isReverse ? "right center" : "left center" }}
+          />
 
           {/* Ornate detail card */}
           <div className="mt-6 relative rounded-2xl border border-gold/30 bg-card/70 p-5 shadow-card backdrop-blur-sm sm:p-6">
