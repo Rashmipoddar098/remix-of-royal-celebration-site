@@ -117,11 +117,14 @@ function EventCard({ event, index, isLast }: { event: WeddingEvent; index: numbe
           />
 
           {/* Ornate detail card */}
-          <div className="mt-6 relative rounded-2xl border border-gold/30 bg-card/70 p-5 shadow-card backdrop-blur-sm sm:p-6">
+          <div
+            className={`mt-6 relative rounded-2xl border border-gold/30 bg-card/70 p-5 shadow-card backdrop-blur-sm sm:p-6 ${visible ? "animate-fade-up" : "opacity-0"}`}
+            style={{ animationDelay: "560ms" }}
+          >
             <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
             <div className="absolute inset-x-6 bottom-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
 
-            <dl className="grid grid-cols-2 gap-x-4 gap-y-4 font-serif-elegant text-maroon/90 text-left sm:gap-x-6">
+            <dl className={`grid grid-cols-2 gap-x-4 gap-y-4 font-serif-elegant text-maroon/90 text-left sm:gap-x-6 text-stagger ${visible ? "is-visible" : ""}`}>
               <div>
                 <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep">Date</dt>
                 <dd className="mt-1 text-base sm:text-lg">{event.date}</dd>
