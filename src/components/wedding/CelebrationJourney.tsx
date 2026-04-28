@@ -282,10 +282,10 @@ export function CelebrationJourney() {
         <div className="mt-20 text-center">
           <div className="mx-auto inline-flex items-center gap-3">
             <span className="h-px w-12 bg-gold/60" />
-            <span className="font-script text-4xl text-gold-deep">श्री</span>
+            <span className="font-script text-4xl text-shimmer-gold animate-text-glow animate-float-soft inline-block">श्री</span>
             <span className="h-px w-12 bg-gold/60" />
           </div>
-          <p className="mt-3 font-serif-elegant italic text-muted-foreground text-sm sm:text-base">
+          <p className="mt-3 font-serif-elegant italic text-muted-foreground text-sm sm:text-base animate-fade-up">
             We await your presence to bless this journey.
           </p>
         </div>
