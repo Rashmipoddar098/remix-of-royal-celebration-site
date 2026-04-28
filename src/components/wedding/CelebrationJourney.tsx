@@ -89,27 +89,42 @@ function EventCard({ event, index, isLast }: { event: WeddingEvent; index: numbe
         {/* Content */}
         <div className={`flex flex-col ${isReverse ? "lg:items-end lg:text-right" : ""}`}>
           <div className={`inline-flex items-center gap-2 self-start ${isReverse ? "lg:self-end" : ""}`}>
-            <span className={`h-1.5 w-1.5 rounded-full ${styles.dot}`} />
-            <span className={`inline-block rounded-full px-3 py-1 font-display text-[10px] uppercase tracking-[0.3em] ${styles.chip}`}>
+            <span className={`h-1.5 w-1.5 rounded-full ${styles.dot} ${visible ? "animate-char-pop" : "opacity-0"}`} />
+            <span
+              className={`inline-block rounded-full px-3 py-1 font-display text-[10px] uppercase tracking-[0.3em] ${styles.chip} ${visible ? "animate-word-slide" : "opacity-0"}`}
+              style={{ animationDelay: "120ms" }}
+            >
               {event.day}
             </span>
           </div>
 
-          <h3 className="mt-3 font-display text-3xl text-maroon sm:text-4xl md:text-5xl">
-            {event.name}
+          <h3
+            className={`mt-3 font-display text-3xl sm:text-4xl md:text-5xl ${visible ? "animate-letter-rise" : "opacity-0"}`}
+            style={{ animationDelay: "240ms" }}
+          >
+            <span className="text-shimmer-royal">{event.name}</span>
           </h3>
-          <p className="mt-2 font-script text-3xl leading-tight text-gold-deep sm:text-4xl">
+          <p
+            className={`mt-2 font-script text-3xl leading-tight text-gold-deep sm:text-4xl ${visible ? "animate-script-draw animate-text-glow" : "opacity-0"}`}
+            style={{ animationDelay: "420ms" }}
+          >
             {event.meaning}
           </p>
 
-          <div className={`mt-5 gold-divider w-24 ${isReverse ? "lg:ml-auto" : ""}`} />
+          <div
+            className={`mt-5 gold-divider w-24 ${isReverse ? "lg:ml-auto" : ""} ${visible ? "animate-underline-grow" : "opacity-0"}`}
+            style={{ transformOrigin: isReverse ? "right center" : "left center" }}
+          />
 
           {/* Ornate detail card */}
-          <div className="mt-6 relative rounded-2xl border border-gold/30 bg-card/70 p-5 shadow-card backdrop-blur-sm sm:p-6">
+          <div
+            className={`mt-6 relative rounded-2xl border border-gold/30 bg-card/70 p-5 shadow-card backdrop-blur-sm sm:p-6 ${visible ? "animate-fade-up" : "opacity-0"}`}
+            style={{ animationDelay: "560ms" }}
+          >
             <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
             <div className="absolute inset-x-6 bottom-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
 
-            <dl className="grid grid-cols-2 gap-x-4 gap-y-4 font-serif-elegant text-maroon/90 text-left sm:gap-x-6">
+            <dl className={`grid grid-cols-2 gap-x-4 gap-y-4 font-serif-elegant text-maroon/90 text-left sm:gap-x-6 text-stagger ${visible ? "is-visible" : ""}`}>
               <div>
                 <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep">Date</dt>
                 <dd className="mt-1 text-base sm:text-lg">{event.date}</dd>
@@ -214,21 +229,30 @@ export function CelebrationJourney() {
       <div className="relative mx-auto max-w-6xl">
         {/* Header */}
         <div className="text-center">
-          <div className="inline-flex items-center gap-3">
+          <div className="inline-flex items-center gap-3 animate-fade-up">
             <span className="h-px w-10 bg-gold/60 sm:w-16" />
-            <p className="font-serif-elegant text-xs uppercase tracking-[0.4em] text-gold-deep sm:text-sm">
+            <p className="font-serif-elegant text-xs uppercase tracking-[0.4em] text-shimmer-gold sm:text-sm">
               Six Sacred Chapters
             </p>
             <span className="h-px w-10 bg-gold/60 sm:w-16" />
           </div>
 
-          <h2 className="mt-4 font-display text-4xl leading-tight text-maroon sm:text-5xl md:text-6xl">
-            <span className="text-gradient-royal">Celebration Journey</span>
+          <h2
+            className="mt-4 font-display text-4xl leading-tight sm:text-5xl md:text-6xl animate-letter-rise"
+            style={{ animationDelay: "200ms" }}
+          >
+            <span className="text-shimmer-royal animate-text-glow">Celebration Journey</span>
           </h2>
-          <p className="mx-auto mt-3 max-w-xl font-script text-3xl text-gold-deep sm:text-4xl">
+          <p
+            className="mx-auto mt-3 max-w-xl font-script text-3xl text-gold-deep sm:text-4xl animate-script-draw animate-text-glow"
+            style={{ animationDelay: "500ms" }}
+          >
             Every ritual a verse in our story
           </p>
-          <p className="mx-auto mt-3 max-w-lg font-serif-elegant italic text-muted-foreground text-sm sm:text-base">
+          <p
+            className="mx-auto mt-3 max-w-lg font-serif-elegant italic text-muted-foreground text-sm sm:text-base animate-fade-up"
+            style={{ animationDelay: "750ms" }}
+          >
             From the first promise to the final celebration — we invite you to walk this sacred path with us.
           </p>
         </div>
@@ -258,10 +282,10 @@ export function CelebrationJourney() {
         <div className="mt-20 text-center">
           <div className="mx-auto inline-flex items-center gap-3">
             <span className="h-px w-12 bg-gold/60" />
-            <span className="font-script text-4xl text-gold-deep">श्री</span>
+            <span className="font-script text-4xl text-shimmer-gold animate-text-glow animate-float-soft inline-block">श्री</span>
             <span className="h-px w-12 bg-gold/60" />
           </div>
-          <p className="mt-3 font-serif-elegant italic text-muted-foreground text-sm sm:text-base">
+          <p className="mt-3 font-serif-elegant italic text-muted-foreground text-sm sm:text-base animate-fade-up">
             We await your presence to bless this journey.
           </p>
         </div>
