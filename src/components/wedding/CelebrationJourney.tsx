@@ -231,7 +231,7 @@ export function CelebrationJourney() {
         <div className="text-center">
           <div className="inline-flex items-center gap-3 animate-fade-up">
             <span className="h-px w-10 bg-gold/60 sm:w-16" />
-            <p className="font-serif-elegant text-xs uppercase tracking-[0.4em] text-shimmer-gold sm:text-sm">
+            <p className="font-serif-elegant text-xs uppercase tracking-[0.4em] text-shimmer-gold text-hover-track cursor-default sm:text-sm">
               Six Sacred Chapters
             </p>
             <span className="h-px w-10 bg-gold/60 sm:w-16" />
@@ -241,16 +241,16 @@ export function CelebrationJourney() {
             className="mt-4 font-display text-4xl leading-tight sm:text-5xl md:text-6xl animate-letter-rise"
             style={{ animationDelay: "200ms" }}
           >
-            <span className="text-shimmer-royal animate-text-glow">Celebration Journey</span>
+            <span className="text-shimmer-royal animate-text-glow text-hover-shimmer cursor-default">Celebration Journey</span>
           </h2>
           <p
-            className="mx-auto mt-3 max-w-xl font-script text-3xl text-gold-deep sm:text-4xl animate-script-draw animate-text-glow"
+            className="mx-auto mt-3 max-w-xl font-script text-3xl text-gold-deep sm:text-4xl animate-script-draw animate-text-glow text-hover-script cursor-default"
             style={{ animationDelay: "500ms" }}
           >
             Every ritual a verse in our story
           </p>
           <p
-            className="mx-auto mt-3 max-w-lg font-serif-elegant italic text-muted-foreground text-sm sm:text-base animate-fade-up"
+            className="mx-auto mt-3 max-w-lg font-serif-elegant italic text-muted-foreground text-sm sm:text-base animate-fade-up text-hover-glow cursor-default"
             style={{ animationDelay: "750ms" }}
           >
             From the first promise to the final celebration — we invite you to walk this sacred path with us.
