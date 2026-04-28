@@ -160,14 +160,56 @@ export function CelebrationJourney() {
   return (
     <section
       id="journey"
-      className="relative overflow-hidden px-4 py-20 sm:py-24 md:py-28 paper-texture"
+      className="relative overflow-hidden px-4 py-20 sm:py-24 md:py-28"
+      style={{
+        background:
+          "radial-gradient(1200px 600px at 50% -10%, color-mix(in oklab, var(--gold) 18%, transparent), transparent 60%), radial-gradient(900px 500px at 100% 100%, color-mix(in oklab, var(--vermilion) 14%, transparent), transparent 65%), radial-gradient(800px 500px at 0% 80%, color-mix(in oklab, var(--kesar) 16%, transparent), transparent 60%), linear-gradient(180deg, var(--ivory) 0%, oklch(0.95 0.04 80) 50%, var(--ivory) 100%)",
+      }}
     >
-      {/* Decorative background flourishes */}
+      {/* Subtle paisley/mandala SVG pattern overlay */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.10]"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><g fill='none' stroke='%23a76a2e' stroke-width='0.8'><circle cx='60' cy='60' r='28'/><circle cx='60' cy='60' r='18'/><circle cx='60' cy='60' r='8'/><path d='M60 12 Q72 36 60 60 Q48 36 60 12 Z'/><path d='M60 108 Q72 84 60 60 Q48 84 60 108 Z'/><path d='M12 60 Q36 48 60 60 Q36 72 12 60 Z'/><path d='M108 60 Q84 48 60 60 Q84 72 108 60 Z'/><circle cx='60' cy='12' r='2'/><circle cx='60' cy='108' r='2'/><circle cx='12' cy='60' r='2'/><circle cx='108' cy='60' r='2'/></g></svg>\")",
+          backgroundSize: "180px 180px",
+        }}
+      />
+
+      {/* Top & bottom ornate borders */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-transparent via-gold/70 to-transparent" />
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-1.5 bg-gradient-to-r from-transparent via-gold/70 to-transparent" />
+
+      {/* Decorative animated glow orbs */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-32 -left-24 h-72 w-72 rounded-full bg-gold/10 blur-3xl" />
-        <div className="absolute top-1/3 -right-32 h-80 w-80 rounded-full bg-vermilion/10 blur-3xl" />
-        <div className="absolute bottom-0 left-1/4 h-72 w-72 rounded-full bg-kesar/10 blur-3xl" />
+        <div className="absolute -top-32 -left-24 h-72 w-72 rounded-full bg-gold/25 blur-3xl animate-float-soft" />
+        <div className="absolute top-1/3 -right-32 h-80 w-80 rounded-full bg-vermilion/20 blur-3xl animate-float-soft" style={{ animationDelay: "1.5s" }} />
+        <div className="absolute bottom-0 left-1/4 h-72 w-72 rounded-full bg-kesar/25 blur-3xl animate-float-soft" style={{ animationDelay: "0.8s" }} />
+        <div className="absolute top-1/2 left-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-maroon/5 blur-3xl" />
       </div>
+
+      {/* Corner mandala flourishes */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-20 -left-20 h-64 w-64 opacity-20 animate-spin-slow sm:h-80 sm:w-80"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' fill='none' stroke='%23b8860b' stroke-width='1'><circle cx='100' cy='100' r='90'/><circle cx='100' cy='100' r='70'/><circle cx='100' cy='100' r='50'/><circle cx='100' cy='100' r='30'/><g><path d='M100 10 L110 50 L100 90 L90 50 Z'/><path d='M100 110 L110 150 L100 190 L90 150 Z'/><path d='M10 100 L50 110 L90 100 L50 90 Z'/><path d='M110 100 L150 110 L190 100 L150 90 Z'/></g></svg>\")",
+          backgroundSize: "contain",
+          backgroundRepeat: "no-repeat",
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 opacity-20 animate-spin-reverse sm:h-80 sm:w-80"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' fill='none' stroke='%23b8860b' stroke-width='1'><circle cx='100' cy='100' r='90'/><circle cx='100' cy='100' r='70'/><circle cx='100' cy='100' r='50'/><circle cx='100' cy='100' r='30'/><g><path d='M100 10 L110 50 L100 90 L90 50 Z'/><path d='M100 110 L110 150 L100 190 L90 150 Z'/><path d='M10 100 L50 110 L90 100 L50 90 Z'/><path d='M110 100 L150 110 L190 100 L150 90 Z'/></g></svg>\")",
+          backgroundSize: "contain",
+          backgroundRepeat: "no-repeat",
+        }}
+      />
 
       <div className="relative mx-auto max-w-6xl">
         {/* Header */}
