@@ -2,16 +2,19 @@ import { useEffect, useRef, useState } from "react";
 import { events, type WeddingEvent } from "@/data/wedding";
 import { OrnateDivider } from "./OrnateDivider";
 
-const accentStyles: Record<WeddingEvent["accent"], { ring: string; chip: string; glow: string }> = {
-  gold: { ring: "ring-gold/40", chip: "bg-gold/20 text-gold-deep", glow: "from-gold/30" },
-  haldi: { ring: "ring-kesar/40", chip: "bg-kesar/25 text-kesar", glow: "from-kesar/30" },
-  mehendi: { ring: "ring-emerald-700/30", chip: "bg-emerald-100 text-emerald-800", glow: "from-emerald-300/30" },
-  sangeet: { ring: "ring-vermilion/40", chip: "bg-vermilion/20 text-vermilion", glow: "from-vermilion/30" },
-  wedding: { ring: "ring-maroon/50", chip: "bg-maroon/15 text-maroon", glow: "from-maroon/40" },
-  maroon: { ring: "ring-maroon/40", chip: "bg-maroon/10 text-maroon", glow: "from-maroon/25" },
+const accentStyles: Record<
+  WeddingEvent["accent"],
+  { ring: string; chip: string; glow: string; badge: string; dot: string }
+> = {
+  gold:    { ring: "ring-gold/50",          chip: "bg-gold/20 text-gold-deep",       glow: "from-gold/40",       badge: "from-gold to-gold-deep",        dot: "bg-gold" },
+  haldi:   { ring: "ring-kesar/50",         chip: "bg-kesar/25 text-kesar",          glow: "from-kesar/40",      badge: "from-kesar to-gold-deep",       dot: "bg-kesar" },
+  mehendi: { ring: "ring-emerald-700/40",   chip: "bg-emerald-100 text-emerald-800", glow: "from-emerald-300/40",badge: "from-emerald-500 to-emerald-700", dot: "bg-emerald-600" },
+  sangeet: { ring: "ring-vermilion/50",     chip: "bg-vermilion/20 text-vermilion",  glow: "from-vermilion/40",  badge: "from-vermilion to-maroon",      dot: "bg-vermilion" },
+  wedding: { ring: "ring-maroon/60",        chip: "bg-maroon/15 text-maroon",        glow: "from-maroon/50",     badge: "from-maroon to-vermilion",      dot: "bg-maroon" },
+  maroon:  { ring: "ring-maroon/40",        chip: "bg-maroon/10 text-maroon",        glow: "from-maroon/30",     badge: "from-maroon to-gold-deep",      dot: "bg-maroon" },
 };
 
-function EventCard({ event, index }: { event: WeddingEvent; index: number }) {
+function EventCard({ event, index, isLast }: { event: WeddingEvent; index: number; isLast: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
   const styles = accentStyles[event.accent];
@@ -21,7 +24,7 @@ function EventCard({ event, index }: { event: WeddingEvent; index: number }) {
     if (!el) return;
     const obs = new IntersectionObserver(
       ([e]) => e.isIntersecting && setVisible(true),
-      { threshold: 0.15 }
+      { threshold: 0.12 }
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -32,96 +35,195 @@ function EventCard({ event, index }: { event: WeddingEvent; index: number }) {
   return (
     <article
       ref={ref}
-      className={`grid gap-8 md:grid-cols-2 md:gap-12 ${
-        visible ? "animate-fade-up" : "opacity-0"
-      } ${isReverse ? "md:[&>:first-child]:order-2" : ""}`}
+      className={`relative ${visible ? "animate-fade-up" : "opacity-0"}`}
     >
-      {/* Image with temple arch */}
-      <div className="relative">
-        <div
-          className={`relative overflow-hidden temple-arch shadow-royal ring-2 ring-offset-4 ring-offset-background ${styles.ring}`}
-        >
-          <img
-            src={event.image}
-            alt={`${event.name} ceremony`}
-            loading="lazy"
-            width={1024}
-            height={1280}
-            className="aspect-[4/5] w-full object-cover transition-transform duration-700 hover:scale-105"
-          />
-          <div className={`absolute inset-0 bg-gradient-to-t ${styles.glow} via-transparent to-transparent opacity-60`} />
+      {/* Timeline node (desktop only) */}
+      <div className="pointer-events-none absolute left-1/2 top-8 hidden -translate-x-1/2 lg:block">
+        <span className={`relative flex h-5 w-5 items-center justify-center rounded-full ${styles.dot} ring-4 ring-ivory shadow-gold`}>
+          <span className="absolute inset-0 animate-ping rounded-full opacity-40" />
+        </span>
+      </div>
+
+      <div
+        className={`grid items-center gap-8 sm:gap-10 md:gap-14 lg:grid-cols-2 ${
+          isReverse ? "lg:[&>:first-child]:order-2" : ""
+        }`}
+      >
+        {/* Image with temple arch + ornate frame */}
+        <div className="relative mx-auto w-full max-w-md lg:max-w-none">
+          {/* Decorative corner motifs */}
+          <span aria-hidden className="absolute -left-2 -top-2 h-8 w-8 border-l-2 border-t-2 border-gold/60 rounded-tl-md sm:h-10 sm:w-10" />
+          <span aria-hidden className="absolute -right-2 -top-2 h-8 w-8 border-r-2 border-t-2 border-gold/60 rounded-tr-md sm:h-10 sm:w-10" />
+          <span aria-hidden className="absolute -left-2 -bottom-2 h-8 w-8 border-l-2 border-b-2 border-gold/60 rounded-bl-md sm:h-10 sm:w-10" />
+          <span aria-hidden className="absolute -right-2 -bottom-2 h-8 w-8 border-r-2 border-b-2 border-gold/60 rounded-br-md sm:h-10 sm:w-10" />
+
+          <div
+            className={`group relative overflow-hidden temple-arch shadow-royal ring-2 ring-offset-4 ring-offset-background ${styles.ring}`}
+          >
+            <img
+              src={event.image}
+              alt={`${event.name} ceremony`}
+              loading="lazy"
+              width={1024}
+              height={1280}
+              className="aspect-[4/5] w-full object-cover transition-transform duration-[1200ms] group-hover:scale-110"
+            />
+            {/* Color glow overlay */}
+            <div className={`pointer-events-none absolute inset-0 bg-gradient-to-t ${styles.glow} via-transparent to-transparent opacity-70`} />
+            {/* Bottom maroon veil with title for mobile elegance */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-maroon/70 via-maroon/20 to-transparent" />
+            {/* Shimmer sweep on hover */}
+            <span aria-hidden className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100">
+              <span className="royal-plaque-shimmer" />
+            </span>
+          </div>
+
+          {/* Chapter badge */}
+          <div className="absolute -top-5 left-1/2 -translate-x-1/2">
+            <span className={`inline-flex items-center gap-2 rounded-full bg-gradient-to-r ${styles.badge} px-4 py-1.5 font-display text-[10px] uppercase tracking-[0.32em] text-ivory shadow-gold sm:text-xs`}>
+              <span aria-hidden>✦</span>
+              Chapter {String(index + 1).padStart(2, "0")}
+              <span aria-hidden>✦</span>
+            </span>
+          </div>
         </div>
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-          <span className={`inline-flex items-center rounded-full ${styles.chip} px-4 py-1 font-display text-xs uppercase tracking-[0.3em] shadow-card`}>
-            Chapter {String(index + 1).padStart(2, "0")}
-          </span>
+
+        {/* Content */}
+        <div className={`flex flex-col ${isReverse ? "lg:items-end lg:text-right" : ""}`}>
+          <div className={`inline-flex items-center gap-2 self-start ${isReverse ? "lg:self-end" : ""}`}>
+            <span className={`h-1.5 w-1.5 rounded-full ${styles.dot}`} />
+            <span className={`inline-block rounded-full px-3 py-1 font-display text-[10px] uppercase tracking-[0.3em] ${styles.chip}`}>
+              {event.day}
+            </span>
+          </div>
+
+          <h3 className="mt-3 font-display text-3xl text-maroon sm:text-4xl md:text-5xl">
+            {event.name}
+          </h3>
+          <p className="mt-2 font-script text-3xl leading-tight text-gold-deep sm:text-4xl">
+            {event.meaning}
+          </p>
+
+          <div className={`mt-5 gold-divider w-24 ${isReverse ? "lg:ml-auto" : ""}`} />
+
+          {/* Ornate detail card */}
+          <div className="mt-6 relative rounded-2xl border border-gold/30 bg-card/70 p-5 shadow-card backdrop-blur-sm sm:p-6">
+            <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
+            <div className="absolute inset-x-6 bottom-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
+
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-4 font-serif-elegant text-maroon/90 text-left sm:gap-x-6">
+              <div>
+                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep">Date</dt>
+                <dd className="mt-1 text-base sm:text-lg">{event.date}</dd>
+              </div>
+              <div>
+                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep">Time</dt>
+                <dd className="mt-1 text-base sm:text-lg">{event.time}</dd>
+              </div>
+              <div className="col-span-2">
+                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep">Dress Code</dt>
+                <dd className="mt-1 text-base sm:text-lg">{event.dress}</dd>
+              </div>
+              <div className="col-span-2">
+                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep">Venue</dt>
+                <dd className="mt-1 text-base leading-snug sm:text-lg">{event.venue}</dd>
+              </div>
+            </dl>
+          </div>
+
+          <a
+            href={event.mapUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`group mt-6 inline-flex w-fit items-center gap-2 self-start overflow-hidden rounded-full bg-gradient-royal px-6 py-2.5 font-display text-[11px] uppercase tracking-[0.3em] text-ivory shadow-royal transition-all hover:scale-[1.04] ${
+              isReverse ? "lg:self-end" : ""
+            }`}
+          >
+            <span aria-hidden className="pointer-events-none absolute inset-0 royal-plaque-shimmer" />
+            <span className="relative">View Map</span>
+            <span aria-hidden className="relative transition-transform group-hover:translate-x-1">→</span>
+          </a>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex flex-col justify-center">
-        <h3 className="font-display text-4xl text-maroon sm:text-5xl">{event.name}</h3>
-        <p className="mt-2 font-serif-elegant text-lg italic text-muted-foreground">{event.meaning}</p>
-
-        <div className="mt-6 gold-divider w-24" />
-
-        <dl className="mt-6 grid grid-cols-2 gap-4 font-serif-elegant text-maroon/90">
-          <div>
-            <dt className="text-xs uppercase tracking-[0.25em] text-gold-deep">Date</dt>
-            <dd className="mt-1 text-lg">{event.date}</dd>
-          </div>
-          <div>
-            <dt className="text-xs uppercase tracking-[0.25em] text-gold-deep">Day</dt>
-            <dd className="mt-1 text-lg">{event.day}</dd>
-          </div>
-          <div>
-            <dt className="text-xs uppercase tracking-[0.25em] text-gold-deep">Time</dt>
-            <dd className="mt-1 text-lg">{event.time}</dd>
-          </div>
-          <div>
-            <dt className="text-xs uppercase tracking-[0.25em] text-gold-deep">Dress</dt>
-            <dd className="mt-1 text-lg">{event.dress}</dd>
-          </div>
-          <div className="col-span-2">
-            <dt className="text-xs uppercase tracking-[0.25em] text-gold-deep">Venue</dt>
-            <dd className="mt-1 text-lg">{event.venue}</dd>
-          </div>
-        </dl>
-
-        <a
-          href={event.mapUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-8 inline-flex w-fit items-center gap-2 rounded-full border border-maroon/30 bg-card px-6 py-2.5 font-display text-xs uppercase tracking-[0.3em] text-maroon transition-all hover:border-gold hover:bg-maroon hover:text-ivory"
-        >
-          View Map
-          <span aria-hidden>→</span>
-        </a>
-      </div>
+      {/* Section divider between cards */}
+      {!isLast && (
+        <div className="mt-16 flex items-center justify-center gap-4 sm:mt-20">
+          <span className="h-px flex-1 max-w-[120px] bg-gradient-to-r from-transparent to-gold/60" />
+          <span className="font-script text-3xl text-gold-deep">❀</span>
+          <span className="h-px flex-1 max-w-[120px] bg-gradient-to-l from-transparent to-gold/60" />
+        </div>
+      )}
     </article>
   );
 }
 
 export function CelebrationJourney() {
   return (
-    <section id="journey" className="relative px-4 py-24">
-      <div className="mx-auto max-w-6xl">
+    <section
+      id="journey"
+      className="relative overflow-hidden px-4 py-20 sm:py-24 md:py-28 paper-texture"
+    >
+      {/* Decorative background flourishes */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-32 -left-24 h-72 w-72 rounded-full bg-gold/10 blur-3xl" />
+        <div className="absolute top-1/3 -right-32 h-80 w-80 rounded-full bg-vermilion/10 blur-3xl" />
+        <div className="absolute bottom-0 left-1/4 h-72 w-72 rounded-full bg-kesar/10 blur-3xl" />
+      </div>
+
+      <div className="relative mx-auto max-w-6xl">
+        {/* Header */}
         <div className="text-center">
-          <p className="font-serif-elegant text-sm uppercase tracking-[0.4em] text-gold-deep">
-            Six Sacred Chapters
+          <div className="inline-flex items-center gap-3">
+            <span className="h-px w-10 bg-gold/60 sm:w-16" />
+            <p className="font-serif-elegant text-xs uppercase tracking-[0.4em] text-gold-deep sm:text-sm">
+              Six Sacred Chapters
+            </p>
+            <span className="h-px w-10 bg-gold/60 sm:w-16" />
+          </div>
+
+          <h2 className="mt-4 font-display text-4xl leading-tight text-maroon sm:text-5xl md:text-6xl">
+            <span className="text-gradient-royal">Celebration Journey</span>
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl font-script text-3xl text-gold-deep sm:text-4xl">
+            Every ritual a verse in our story
           </p>
-          <h2 className="mt-3 font-display text-4xl text-maroon sm:text-5xl">Celebration Journey</h2>
-          <p className="mx-auto mt-4 max-w-xl font-serif-elegant italic text-muted-foreground">
-            From the first promise to the final celebration — every ritual a verse in our story.
+          <p className="mx-auto mt-3 max-w-lg font-serif-elegant italic text-muted-foreground text-sm sm:text-base">
+            From the first promise to the final celebration — we invite you to walk this sacred path with us.
           </p>
         </div>
 
         <OrnateDivider />
 
-        <div className="space-y-24">
-          {events.map((event, i) => (
-            <EventCard key={event.id} event={event} index={i} />
-          ))}
+        {/* Timeline spine (desktop) */}
+        <div className="relative">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-gold/40 to-transparent lg:block"
+          />
+
+          <div className="space-y-20 sm:space-y-24 md:space-y-28">
+            {events.map((event, i) => (
+              <EventCard
+                key={event.id}
+                event={event}
+                index={i}
+                isLast={i === events.length - 1}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Closing flourish */}
+        <div className="mt-20 text-center">
+          <div className="mx-auto inline-flex items-center gap-3">
+            <span className="h-px w-12 bg-gold/60" />
+            <span className="font-script text-4xl text-gold-deep">श्री</span>
+            <span className="h-px w-12 bg-gold/60" />
+          </div>
+          <p className="mt-3 font-serif-elegant italic text-muted-foreground text-sm sm:text-base">
+            We await your presence to bless this journey.
+          </p>
         </div>
       </div>
     </section>
