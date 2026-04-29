@@ -9,6 +9,55 @@ import gallery1 from "@/assets/gallery-1.jpg";
 import gallery2 from "@/assets/gallery-2.jpg";
 import gallery3 from "@/assets/gallery-3.jpg";
 import gallery4 from "@/assets/gallery-4.jpg";
+import brideGroupImg from "@/assets/family-bride-group.jpg";
+import brideFatherImg from "@/assets/family-bride-father.jpg";
+import brideMotherImg from "@/assets/family-bride-mother.jpg";
+import brideGrandmotherImg from "@/assets/family-bride-grandmother.jpg";
+import brideBrotherImg from "@/assets/family-bride-brother.jpg";
+import groomGroupImg from "@/assets/family-groom-group.jpg";
+import groomFatherImg from "@/assets/family-groom-father.jpg";
+import groomMotherImg from "@/assets/family-groom-mother.jpg";
+import groomGrandfatherImg from "@/assets/family-groom-grandfather.jpg";
+import groomBrotherImg from "@/assets/family-groom-brother.jpg";
+
+export type FamilyMember = { name: string; relation: string; image: string };
+export type FamilySide = {
+  side: "bride" | "groom";
+  title: string;
+  subtitle: string;
+  surname: string;
+  groupImage: string;
+  members: FamilyMember[];
+};
+
+export const familySides: FamilySide[] = [
+  {
+    side: "bride",
+    title: "Bride’s Family",
+    subtitle: "The Sharma Household",
+    surname: "Sharma Parivaar",
+    groupImage: brideGroupImg,
+    members: [
+      { name: "Shri Rajeev Sharma", relation: "Father of the Bride", image: brideFatherImg },
+      { name: "Smt. Meera Sharma", relation: "Mother of the Bride", image: brideMotherImg },
+      { name: "Smt. Lakshmi Devi", relation: "Daadi (Grandmother)", image: brideGrandmotherImg },
+      { name: "Rohan Sharma", relation: "Brother of the Bride", image: brideBrotherImg },
+    ],
+  },
+  {
+    side: "groom",
+    title: "Groom’s Family",
+    subtitle: "The Rajvanshi Household",
+    surname: "Rajvanshi Parivaar",
+    groupImage: groomGroupImg,
+    members: [
+      { name: "Shri Vikram Rajvanshi", relation: "Father of the Groom", image: groomFatherImg },
+      { name: "Smt. Anjali Rajvanshi", relation: "Mother of the Groom", image: groomMotherImg },
+      { name: "Shri Hari Prasad", relation: "Baba (Grandfather)", image: groomGrandfatherImg },
+      { name: "Aditya Rajvanshi", relation: "Brother of the Groom", image: groomBrotherImg },
+    ],
+  },
+];
 
 export const guestName = "Dear Guest";
 
