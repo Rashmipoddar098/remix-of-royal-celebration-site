@@ -57,8 +57,14 @@ function EventCard({ event, index, isLast }: { event: WeddingEvent; index: numbe
           <span aria-hidden className="absolute -left-2 -bottom-2 h-6 w-6 border-l-2 border-b-2 border-gold/60 rounded-bl-md sm:h-8 sm:w-8" />
           <span aria-hidden className="absolute -right-2 -bottom-2 h-6 w-6 border-r-2 border-b-2 border-gold/60 rounded-br-md sm:h-8 sm:w-8" />
 
+          {/* Soft pulsing halo behind frame */}
           <div
-            className={`group relative overflow-hidden temple-arch shadow-royal ring-2 ring-offset-4 ring-offset-background ${styles.ring}`}
+            aria-hidden
+            className={`pointer-events-none absolute -inset-4 rounded-[40%] bg-gradient-to-br ${styles.glow} via-transparent to-transparent blur-2xl animate-halo-pulse`}
+          />
+
+          <div
+            className={`group relative overflow-hidden temple-arch shadow-royal ring-2 ring-offset-4 ring-offset-background frame-aurora ${styles.ring}`}
           >
             <img
               src={event.image}
@@ -66,16 +72,26 @@ function EventCard({ event, index, isLast }: { event: WeddingEvent; index: numbe
               loading="lazy"
               width={1024}
               height={1280}
-              className="aspect-[4/5] w-full object-cover transition-transform duration-[1200ms] group-hover:scale-110"
+              className="aspect-[4/5] w-full object-cover animate-ken-burns transition-transform duration-[1200ms] group-hover:scale-110"
             />
             {/* Color glow overlay */}
             <div className={`pointer-events-none absolute inset-0 bg-gradient-to-t ${styles.glow} via-transparent to-transparent opacity-70`} />
             {/* Bottom maroon veil with title for mobile elegance */}
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-maroon/70 via-maroon/20 to-transparent" />
-            {/* Shimmer sweep on hover */}
-            <span aria-hidden className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100">
+            {/* Continuous shimmer sweep */}
+            <span aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
               <span className="royal-plaque-shimmer" />
             </span>
+            {/* Drifting sparkle */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute top-1/4 left-0 h-2 w-2 rounded-full bg-ivory/90 shadow-[0_0_12px_4px_rgba(255,236,179,0.85)] animate-drift-sparkle"
+            />
+            <span
+              aria-hidden
+              className="pointer-events-none absolute top-2/3 left-0 h-1.5 w-1.5 rounded-full bg-gold/90 shadow-[0_0_10px_3px_rgba(212,175,55,0.8)] animate-drift-sparkle"
+              style={{ animationDelay: "3s", animationDuration: "9s" }}
+            />
           </div>
 
           {/* Decorative ornament badge */}
