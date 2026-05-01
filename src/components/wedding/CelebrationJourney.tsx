@@ -116,7 +116,7 @@ function EventCard({ event, index, isLast }: { event: WeddingEvent; index: numbe
             style={{ transformOrigin: isReverse ? "right center" : "left center" }}
           />
 
-          <
+          <a
             href={event.mapUrl}
             target="_blank"
             rel="noopener noreferrer"
