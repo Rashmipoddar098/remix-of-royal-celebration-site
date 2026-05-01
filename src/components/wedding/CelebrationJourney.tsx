@@ -50,12 +50,12 @@ function EventCard({ event, index, isLast }: { event: WeddingEvent; index: numbe
         }`}
       >
         {/* Image with temple arch + ornate frame */}
-        <div className="relative mx-auto w-full max-w-md lg:max-w-none">
+        <div className="relative mx-auto w-full max-w-[200px] sm:max-w-[240px] md:max-w-[260px] lg:max-w-[280px]">
           {/* Decorative corner motifs */}
-          <span aria-hidden className="absolute -left-2 -top-2 h-8 w-8 border-l-2 border-t-2 border-gold/60 rounded-tl-md sm:h-10 sm:w-10" />
-          <span aria-hidden className="absolute -right-2 -top-2 h-8 w-8 border-r-2 border-t-2 border-gold/60 rounded-tr-md sm:h-10 sm:w-10" />
-          <span aria-hidden className="absolute -left-2 -bottom-2 h-8 w-8 border-l-2 border-b-2 border-gold/60 rounded-bl-md sm:h-10 sm:w-10" />
-          <span aria-hidden className="absolute -right-2 -bottom-2 h-8 w-8 border-r-2 border-b-2 border-gold/60 rounded-br-md sm:h-10 sm:w-10" />
+          <span aria-hidden className="absolute -left-2 -top-2 h-6 w-6 border-l-2 border-t-2 border-gold/60 rounded-tl-md sm:h-8 sm:w-8" />
+          <span aria-hidden className="absolute -right-2 -top-2 h-6 w-6 border-r-2 border-t-2 border-gold/60 rounded-tr-md sm:h-8 sm:w-8" />
+          <span aria-hidden className="absolute -left-2 -bottom-2 h-6 w-6 border-l-2 border-b-2 border-gold/60 rounded-bl-md sm:h-8 sm:w-8" />
+          <span aria-hidden className="absolute -right-2 -bottom-2 h-6 w-6 border-r-2 border-b-2 border-gold/60 rounded-br-md sm:h-8 sm:w-8" />
 
           <div
             className={`group relative overflow-hidden temple-arch shadow-royal ring-2 ring-offset-4 ring-offset-background ${styles.ring}`}
@@ -79,9 +79,9 @@ function EventCard({ event, index, isLast }: { event: WeddingEvent; index: numbe
           </div>
 
           {/* Decorative ornament badge */}
-          <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-            <span className={`inline-flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-r ${styles.badge} text-ivory shadow-gold ring-2 ring-ivory sm:h-10 sm:w-10`}>
-              <span aria-hidden className="font-script text-lg sm:text-xl">✦</span>
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+            <span className={`inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r ${styles.badge} text-ivory shadow-gold ring-2 ring-ivory sm:h-9 sm:w-9`}>
+              <span aria-hidden className="font-script text-base sm:text-lg">✦</span>
             </span>
           </div>
         </div>
@@ -115,34 +115,6 @@ function EventCard({ event, index, isLast }: { event: WeddingEvent; index: numbe
             className={`mt-5 gold-divider w-24 ${isReverse ? "lg:ml-auto" : ""} ${visible ? "animate-underline-grow" : "opacity-0"}`}
             style={{ transformOrigin: isReverse ? "right center" : "left center" }}
           />
-
-          {/* Ornate detail card */}
-          <div
-            className={`mt-6 relative rounded-2xl border border-gold/30 bg-card/70 p-5 shadow-card backdrop-blur-sm sm:p-6 ${visible ? "animate-fade-up" : "opacity-0"}`}
-            style={{ animationDelay: "560ms" }}
-          >
-            <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
-            <div className="absolute inset-x-6 bottom-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
-
-            <dl className={`grid grid-cols-2 gap-x-4 gap-y-4 font-serif-elegant text-maroon/90 text-left sm:gap-x-6 text-stagger ${visible ? "is-visible" : ""}`}>
-              <div className="group-text-hover">
-                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep text-hover-track cursor-default">Date</dt>
-                <dd className="mt-1 text-base sm:text-lg group-text-target">{event.date}</dd>
-              </div>
-              <div className="group-text-hover">
-                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep text-hover-track cursor-default">Time</dt>
-                <dd className="mt-1 text-base sm:text-lg group-text-target">{event.time}</dd>
-              </div>
-              <div className="col-span-2 group-text-hover">
-                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep text-hover-track cursor-default">Dress Code</dt>
-                <dd className="mt-1 text-base sm:text-lg group-text-target">{event.dress}</dd>
-              </div>
-              <div className="col-span-2 group-text-hover">
-                <dt className="text-[10px] uppercase tracking-[0.25em] text-gold-deep text-hover-track cursor-default">Venue</dt>
-                <dd className="mt-1 text-base leading-snug sm:text-lg group-text-target">{event.venue}</dd>
-              </div>
-            </dl>
-          </div>
 
           <a
             href={event.mapUrl}
