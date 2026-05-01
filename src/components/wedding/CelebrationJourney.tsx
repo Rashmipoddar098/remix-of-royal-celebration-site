@@ -132,21 +132,42 @@ function EventCard({ event, index, isLast }: { event: WeddingEvent; index: numbe
             style={{ animationDelay: "420ms" }}
           >
             {[
-              { label: "Date", value: event.date },
-              { label: "Time", value: event.time },
-              { label: "Dress", value: event.dress },
-              { label: "Venue", value: event.venue },
-            ].map((d) => (
+              { label: "Date", value: event.date, icon: "📅" },
+              { label: "Time", value: event.time, icon: "⏰" },
+              { label: "Dress", value: event.dress, icon: "👗" },
+              { label: "Venue", value: event.venue, icon: "📍" },
+            ].map((d, i) => (
               <div
                 key={d.label}
-                className={`rounded-xl border border-gold/30 bg-ivory/60 px-4 py-3 backdrop-blur-sm shadow-sm transition-all duration-500 hover:border-gold/70 hover:shadow-gold ${isReverse ? "lg:text-right" : ""}`}
+                className={`group/detail relative overflow-hidden rounded-2xl border border-gold/40 bg-gradient-to-br from-ivory/90 via-ivory/70 to-gold/10 px-4 py-3.5 backdrop-blur-md shadow-[0_4px_18px_-6px_rgba(168,106,46,0.25)] transition-all duration-500 hover:-translate-y-1 hover:border-gold hover:shadow-gold ${isReverse ? "lg:text-right" : ""}`}
+                style={{ animationDelay: `${500 + i * 80}ms` }}
               >
-                <dt className="font-display text-[10px] uppercase tracking-[0.3em] text-gold-deep text-hover-track cursor-default">
-                  {d.label}
-                </dt>
-                <dd className="mt-1 font-serif-elegant text-sm text-maroon group-text-target sm:text-base">
-                  {d.value}
-                </dd>
+                {/* Corner gold accents */}
+                <span aria-hidden className="pointer-events-none absolute -left-px -top-px h-3 w-3 border-l-2 border-t-2 border-gold/70 rounded-tl-2xl" />
+                <span aria-hidden className="pointer-events-none absolute -right-px -bottom-px h-3 w-3 border-r-2 border-b-2 border-gold/70 rounded-br-2xl" />
+                {/* Continuous shimmer sweep */}
+                <span aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden opacity-60">
+                  <span className="royal-plaque-shimmer" />
+                </span>
+                {/* Soft animated glow on hover */}
+                <span aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-gold/0 via-gold/0 to-gold/30 opacity-0 transition-opacity duration-700 group-hover/detail:opacity-100" />
+
+                <div className={`relative flex items-start gap-3 ${isReverse ? "lg:flex-row-reverse lg:text-right" : ""}`}>
+                  <span
+                    aria-hidden
+                    className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${styles.badge} text-base shadow-gold ring-2 ring-ivory transition-transform duration-500 group-hover/detail:rotate-[12deg] group-hover/detail:scale-110`}
+                  >
+                    <span className="drop-shadow-sm">{d.icon}</span>
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <dt className="font-display text-[10px] uppercase tracking-[0.32em] text-shimmer-gold text-hover-track cursor-default">
+                      {d.label}
+                    </dt>
+                    <dd className="mt-1 font-serif-elegant text-sm text-maroon group-text-target sm:text-[15px] leading-snug transition-colors duration-300 group-hover/detail:text-vermilion">
+                      {d.value}
+                    </dd>
+                  </div>
+                </div>
               </div>
             ))}
           </dl>
