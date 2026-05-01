@@ -365,6 +365,59 @@
 
 .perspective-\[1200px\] { perspective: 1200px; }
 
+/* Continuous Ken-Burns zoom & pan for hero/event imagery */
+@keyframes ken-burns {
+  0%   { transform: scale(1)    translate3d(0, 0, 0); }
+  50%  { transform: scale(1.08) translate3d(-1.5%, -1%, 0); }
+  100% { transform: scale(1)    translate3d(0, 0, 0); }
+}
+.animate-ken-burns {
+  animation: ken-burns 14s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Slow rotating conic ring around an image frame */
+@keyframes ring-rotate {
+  to { transform: rotate(360deg); }
+}
+.frame-aurora::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(
+    from 0deg,
+    color-mix(in oklab, var(--gold) 70%, transparent),
+    color-mix(in oklab, var(--vermilion) 60%, transparent),
+    color-mix(in oklab, var(--kesar) 70%, transparent),
+    color-mix(in oklab, var(--gold-deep) 80%, transparent),
+    color-mix(in oklab, var(--gold) 70%, transparent)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  animation: ring-rotate 9s linear infinite;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+/* Soft pulsing glow halo behind an image */
+@keyframes halo-pulse {
+  0%, 100% { opacity: 0.45; transform: scale(1); }
+  50%      { opacity: 0.85; transform: scale(1.06); }
+}
+.animate-halo-pulse { animation: halo-pulse 4.5s ease-in-out infinite; }
+
+/* Light sparkle drifting across image */
+@keyframes drift-sparkle {
+  0%   { transform: translate3d(-20%, 10%, 0) rotate(0deg); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translate3d(120%, -15%, 0) rotate(360deg); opacity: 0; }
+}
+.animate-drift-sparkle { animation: drift-sparkle 7s ease-in-out infinite; }
+
 /* ===== Royal card hover interactions ===== */
 .royal-card-tilt {
   transform-style: preserve-3d;
