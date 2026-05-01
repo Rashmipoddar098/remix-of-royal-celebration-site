@@ -234,18 +234,6 @@ export function CelebrationJourney() {
           >
             <span className="text-shimmer-royal animate-text-glow text-hover-shimmer cursor-default">Celebration Journey</span>
           </h2>
-          <p
-            className="mx-auto mt-3 max-w-xl font-script text-3xl text-gold-deep sm:text-4xl animate-script-draw animate-text-glow text-hover-script cursor-default"
-            style={{ animationDelay: "500ms" }}
-          >
-            Every ritual a verse in our story
-          </p>
-          <p
-            className="mx-auto mt-3 max-w-lg font-serif-elegant italic text-muted-foreground text-sm sm:text-base animate-fade-up text-hover-glow cursor-default"
-            style={{ animationDelay: "750ms" }}
-          >
-            From the first promise to the final celebration — we invite you to walk this sacred path with us.
-          </p>
         </div>
 
         <OrnateDivider />
