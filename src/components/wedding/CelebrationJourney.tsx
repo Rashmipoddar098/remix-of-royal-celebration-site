@@ -135,7 +135,7 @@ function EventCard({ event, index, isLast }: { event: WeddingEvent; index: numbe
             ))}
           </dl>
 
-          <
+          <a
             href={event.mapUrl}
             target="_blank"
             rel="noopener noreferrer"
