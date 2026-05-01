@@ -104,17 +104,36 @@ function EventCard({ event, index, isLast }: { event: WeddingEvent; index: numbe
           >
             <span className="text-shimmer-royal text-hover-shimmer cursor-default">{event.name}</span>
           </h3>
-          <p
-            className={`mt-2 font-script text-3xl leading-tight text-gold-deep sm:text-4xl text-hover-script cursor-default ${visible ? "animate-script-draw animate-text-glow" : "opacity-0"}`}
-            style={{ animationDelay: "420ms" }}
-          >
-            {event.meaning}
-          </p>
 
           <div
-            className={`mt-5 gold-divider w-24 ${isReverse ? "lg:ml-auto" : ""} ${visible ? "animate-underline-grow" : "opacity-0"}`}
+            className={`mt-4 gold-divider w-24 ${isReverse ? "lg:ml-auto" : ""} ${visible ? "animate-underline-grow" : "opacity-0"}`}
             style={{ transformOrigin: isReverse ? "right center" : "left center" }}
           />
+
+          {/* Event details: Date / Time / Dress / Venue */}
+          <dl
+            className={`group-text-hover mt-6 grid w-full max-w-md grid-cols-1 gap-3 sm:grid-cols-2 ${isReverse ? "lg:ml-auto" : ""} ${visible ? "animate-fade-up" : "opacity-0"}`}
+            style={{ animationDelay: "420ms" }}
+          >
+            {[
+              { label: "Date", value: event.date },
+              { label: "Time", value: event.time },
+              { label: "Dress", value: event.dress },
+              { label: "Venue", value: event.venue },
+            ].map((d) => (
+              <div
+                key={d.label}
+                className={`rounded-xl border border-gold/30 bg-ivory/60 px-4 py-3 backdrop-blur-sm shadow-sm transition-all duration-500 hover:border-gold/70 hover:shadow-gold ${isReverse ? "lg:text-right" : ""}`}
+              >
+                <dt className="font-display text-[10px] uppercase tracking-[0.3em] text-gold-deep text-hover-track cursor-default">
+                  {d.label}
+                </dt>
+                <dd className="mt-1 font-serif-elegant text-sm text-maroon group-text-target sm:text-base">
+                  {d.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
 
           <a
             href={event.mapUrl}
