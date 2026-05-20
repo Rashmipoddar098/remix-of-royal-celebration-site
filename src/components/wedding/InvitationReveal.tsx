@@ -6,14 +6,7 @@ export function InvitationReveal() {
   return (
     <section
       id="invitation"
-      className="relative overflow-hidden px-4 pb-24 pt-12 sm:pt-16"
-      style={{
-        background:
-          "radial-gradient(ellipse 60% 45% at 50% 0%, color-mix(in oklab, var(--kesar) 28%, transparent) 0%, transparent 70%)," +
-          "radial-gradient(ellipse 50% 40% at 0% 100%, color-mix(in oklab, var(--vermilion) 25%, transparent) 0%, transparent 65%)," +
-          "radial-gradient(ellipse 50% 40% at 100% 100%, color-mix(in oklab, var(--gold) 30%, transparent) 0%, transparent 65%)," +
-          "linear-gradient(180deg, color-mix(in oklab, var(--sandal) 55%, var(--ivory)) 0%, color-mix(in oklab, var(--ivory) 92%, var(--gold)) 50%, color-mix(in oklab, var(--sandal) 80%, var(--ivory)) 100%)",
-      }}
+      className="relative flex w-full flex-1 flex-col items-center overflow-hidden px-4 py-4 sm:py-8"
     >
       {/* Layer 1 — Dense paisley/mandala SVG tile (subtle base texture) */}
       <div
@@ -102,13 +95,12 @@ export function InvitationReveal() {
       {/* Layer 5 — Top & bottom ornate gold double borders */}
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-gold-deep to-transparent" />
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-1.5 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-transparent via-gold-deep to-transparent" />
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-1.5 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
 
-      {/* Layer 6 — Ambient color glows */}
-      <div aria-hidden className="pointer-events-none absolute -left-32 top-10 h-80 w-80 rounded-full bg-gold/30 blur-3xl animate-glow-pulse" />
-      <div aria-hidden className="pointer-events-none absolute -right-32 bottom-10 h-96 w-96 rounded-full bg-vermilion/25 blur-3xl animate-glow-pulse" />
-      <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/4 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-kesar/15 blur-3xl" />
+
+      {/* Layer 6 — Ambient color glows (smaller on mobile to avoid blob effect) */}
+      <div aria-hidden className="pointer-events-none absolute -left-16 top-10 h-40 w-40 rounded-full bg-gold/25 blur-3xl animate-glow-pulse lg:-left-32 lg:h-80 lg:w-80" />
+      <div aria-hidden className="pointer-events-none absolute -right-16 bottom-10 h-40 w-40 rounded-full bg-vermilion/20 blur-3xl animate-glow-pulse lg:-right-32 lg:h-96 lg:w-96" />
+      <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/4 h-40 w-40 -translate-x-1/2 rounded-full bg-kesar/10 blur-3xl lg:h-[28rem] lg:w-[28rem]" />
 
       {/* Layer 7 — Floating paisley motifs */}
       <svg aria-hidden className="pointer-events-none absolute left-3 top-16 h-14 w-14 text-gold-deep/40 animate-float-soft sm:left-6 sm:h-20 sm:w-20 lg:h-24 lg:w-24" viewBox="0 0 60 60" fill="none">
@@ -177,9 +169,10 @@ export function InvitationReveal() {
         </svg>
       ))}
 
-      <div className="relative mx-auto max-w-5xl">
+      {/* Content wrapper — flex-1 + justify-center mirrors desktop centering on all screen sizes */}
+      <div className="relative mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center gap-4 sm:gap-6 lg:gap-8 py-4 lg:py-0">
         {/* HERO: Bride & Groom circling the sacred fire */}
-        <div className="relative mx-auto w-full max-w-[260px] animate-scale-reveal sm:max-w-xs lg:max-w-sm">
+        <div className="relative mx-auto w-full max-w-[260px] shrink-0 animate-scale-reveal sm:max-w-[300px] lg:max-w-[340px]">
           <div className="relative aspect-square w-full">
             {/* Outer golden halo */}
             <div
@@ -289,127 +282,74 @@ export function InvitationReveal() {
               className="absolute right-6 top-2 h-6 w-6 rounded-full border border-gold-deep/50 bg-ivory/70 animate-float-soft delay-500 sm:h-8 sm:w-8"
             />
           </div>
-
         </div>
+        {/* Invitation Content — Full Screen Flow */}
+        <div className="relative flex w-full flex-col items-center animate-fade-up delay-200 mt-4 sm:mt-6 lg:mt-8">
+          {/* Top temple-arch crown with kalash */}
+          <div className="relative mb-2 flex justify-center sm:mb-3">
+            <div aria-hidden className="absolute -top-2 h-2.5 w-2.5 rotate-45 bg-gradient-gold shadow-gold animate-flicker sm:-top-3 sm:h-3 sm:w-3" />
+            <svg viewBox="0 0 80 24" className="h-5 w-20 text-gold-deep/80 sm:h-6 sm:w-24 lg:h-6 lg:w-24" aria-hidden>
+              <path d="M2 22 Q40 -4 78 22" fill="none" stroke="currentColor" strokeWidth="1.2" />
+              <path d="M8 22 Q40 4 72 22" fill="none" stroke="currentColor" strokeWidth="0.6" />
+              <circle cx="40" cy="6" r="2" fill="currentColor" />
+            </svg>
+          </div>
 
-        {/* Invitation card — Royal Mahal style */}
-        <div className="group relative mx-auto mt-8 w-full max-w-sm animate-fade-up delay-200 sm:mt-10 sm:max-w-xl md:max-w-2xl perspective-[1200px]">
-          {/* Outer royal glow */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10 rounded-sm bg-gradient-gold opacity-30 blur-2xl animate-glow-pulse royal-hover-glow"
-          />
+          {/* Header */}
+          <p className="text-center font-serif-elegant text-[0.8rem] italic tracking-[0.25em] text-maroon/80 sm:text-[0.9rem] lg:text-[1rem]">
+            ✦ You are cordially invited ✦
+          </p>
 
-          <div className="royal-card royal-card-tilt relative overflow-hidden rounded-sm bg-card p-[2px] shadow-royal">
-            {/* Animated gold-shimmer frame */}
-            <div aria-hidden className="absolute inset-0 rounded-sm royal-shimmer-frame" />
+          {/* Couple names */}
+          <div className="mt-2 flex flex-col items-center gap-0.5 sm:mt-3">
+            <h2 className="bg-gradient-royal bg-clip-text font-display text-4xl font-semibold text-transparent drop-shadow-sm sm:text-4xl lg:text-5xl text-hover-lift">
+              {couple.brideFirst}
+            </h2>
 
-            {/* Diagonal hover light sweep */}
-            <div aria-hidden className="royal-hover-sweep" />
-
-            <div className="relative rounded-sm bg-gradient-ivory px-5 py-4 sm:px-8 sm:py-5">
-              {/* Inner ornate double border */}
-              <div aria-hidden className="pointer-events-none absolute inset-2 rounded-sm border border-gold/40" />
-              <div aria-hidden className="pointer-events-none absolute inset-3 rounded-sm border border-dashed border-gold-deep/30" />
-
-              {/* Mandala corner motifs */}
-              {[
-                { pos: "left-1 top-1", rot: "0deg" },
-                { pos: "right-1 top-1 rotate-90", rot: "90deg" },
-                { pos: "left-1 bottom-1 -rotate-90", rot: "-90deg" },
-                { pos: "right-1 bottom-1 rotate-180", rot: "180deg" },
-              ].map((c, i) => (
-                <svg
-                  key={i}
-                  aria-hidden
-                  viewBox="0 0 40 40"
-                  style={{ ["--rot" as any]: c.rot }}
-                  className={`royal-corner-motif absolute ${c.pos} h-6 w-6 text-gold-deep/70 sm:h-7 sm:w-7`}
-                >
-                  <g fill="none" stroke="currentColor" strokeWidth="1">
-                    <path d="M2 2 L18 2 M2 2 L2 18" />
-                    <path d="M2 2 Q14 6 18 18" />
-                    <circle cx="6" cy="6" r="1.5" fill="currentColor" />
-                    <path d="M10 2 Q12 6 10 10" />
-                    <path d="M2 10 Q6 12 10 10" />
-                  </g>
-                </svg>
-              ))}
-
-              {/* Top temple-arch crown with kalash */}
-              <div className="relative mb-2 flex justify-center">
-                <div aria-hidden className="royal-kalash absolute -top-3 h-3 w-3 rotate-45 bg-gradient-gold shadow-gold animate-flicker sm:-top-4 sm:h-4 sm:w-4" />
-                <svg viewBox="0 0 80 24" className="h-5 w-20 text-gold-deep/80 sm:h-6 sm:w-24" aria-hidden>
-                  <path d="M2 22 Q40 -4 78 22" fill="none" stroke="currentColor" strokeWidth="1.2" />
-                  <path d="M8 22 Q40 4 72 22" fill="none" stroke="currentColor" strokeWidth="0.6" />
-                  <circle cx="40" cy="6" r="2" fill="currentColor" />
-                </svg>
-              </div>
-
-              {/* Header */}
-              <p className="text-center font-serif-elegant text-[0.65rem] italic tracking-[0.25em] text-maroon/70 sm:text-[0.7rem]">
-                ✦ You are cordially invited ✦
-              </p>
-
-              {/* Couple names */}
-              <div className="mt-2 flex flex-col items-center gap-0.5 sm:mt-3">
-                <h2 className="royal-name bg-gradient-royal bg-clip-text font-display text-lg font-semibold text-transparent drop-shadow-sm sm:text-xl">
-                  {couple.brideFirst}
-                </h2>
-
-                <div className="relative flex items-center gap-2 py-0.5">
-                  <span aria-hidden className="h-px w-6 bg-gradient-to-r from-transparent to-gold sm:w-8" />
-                  <span className="font-script text-2xl leading-none text-vermilion sm:text-3xl">
-                    weds
-                  </span>
-                  <span aria-hidden className="h-px w-6 bg-gradient-to-l from-transparent to-gold sm:w-8" />
-                </div>
-
-                <h2 className="royal-name bg-gradient-royal bg-clip-text font-display text-lg font-semibold text-transparent drop-shadow-sm sm:text-xl">
-                  {couple.groomFirst}
-                </h2>
-              </div>
-
-              {/* Ornate divider with center jewel */}
-              <div className="mx-auto mt-3 flex w-full max-w-[220px] items-center gap-1.5 sm:mt-3">
-                <span className="h-px flex-1 bg-gradient-to-r from-transparent via-gold to-gold-deep" />
-                <span aria-hidden className="royal-jewel relative h-2 w-2 rotate-45 bg-gradient-gold shadow-gold">
-                  <span className="absolute inset-[-3px] rounded-full border border-gold/60" />
-                </span>
-                <span className="h-px flex-1 bg-gradient-to-l from-transparent via-gold to-gold-deep" />
-              </div>
-
-              <p className="mt-2 text-center font-serif-elegant text-[0.7rem] italic leading-relaxed text-maroon/80 sm:mt-3 sm:text-xs">
-                as they begin their sacred journey of seven vows
-                <br className="hidden sm:block" />
-                {" "}on the shores of the City of Lakes.
-              </p>
-
-              {/* Royal date & destination plaque */}
-              <div className="mt-3 flex justify-center sm:mt-3">
-                <div className="relative inline-flex flex-col items-center gap-1 overflow-hidden rounded-md bg-gradient-royal px-4 py-2 shadow-royal sm:px-5 sm:py-2.5">
-                  {/* shimmer streak */}
-                  <span aria-hidden className="pointer-events-none absolute inset-0 royal-plaque-shimmer" />
-                  <p className="relative font-display text-[0.55rem] tracking-[0.28em] text-ivory sm:text-[0.65rem]">
-                    {couple.weddingDate.toUpperCase()}
-                  </p>
-                  <span aria-hidden className="relative h-px w-8 bg-gold/70" />
-                  <p className="relative font-display text-[0.55rem] tracking-[0.28em] text-ivory sm:text-[0.65rem]">
-                    {couple.destination.toUpperCase()}
-                  </p>
-                </div>
-              </div>
-
-              {/* Bottom flourish */}
-              <div className="mt-2 flex justify-center sm:mt-3">
-                <svg viewBox="0 0 120 12" className="h-3 w-24 text-gold-deep/70 sm:w-28" aria-hidden>
-                  <path d="M2 6 Q30 -4 60 6 Q90 16 118 6" fill="none" stroke="currentColor" strokeWidth="0.8" />
-                  <circle cx="60" cy="6" r="1.5" fill="currentColor" />
-                  <circle cx="20" cy="6" r="0.8" fill="currentColor" />
-                  <circle cx="100" cy="6" r="0.8" fill="currentColor" />
-                </svg>
-              </div>
+            <div className="relative flex items-center gap-3 py-1 sm:gap-3 sm:py-2">
+              <span aria-hidden className="h-px w-10 bg-gradient-to-r from-transparent to-gold sm:w-16" />
+              <span className="font-script text-5xl leading-none text-vermilion sm:text-5xl lg:text-6xl text-hover-glow">
+                weds
+              </span>
+              <span aria-hidden className="h-px w-10 bg-gradient-to-l from-transparent to-gold sm:w-16" />
             </div>
+
+            <h2 className="bg-gradient-royal bg-clip-text font-display text-4xl font-semibold text-transparent drop-shadow-sm sm:text-4xl lg:text-5xl text-hover-lift">
+              {couple.groomFirst}
+            </h2>
+          </div>
+
+          {/* Ornate divider with center jewel */}
+          <div className="mx-auto mt-4 flex w-full max-w-[240px] items-center gap-2 sm:mt-5 sm:max-w-[320px]">
+            <span className="h-px flex-1 bg-gradient-to-r from-transparent via-gold to-gold-deep" />
+            <span aria-hidden className="relative h-2 w-2 rotate-45 bg-gradient-gold shadow-gold sm:h-2.5 sm:w-2.5">
+              <span className="absolute inset-[-3px] rounded-full border border-gold/60" />
+            </span>
+            <span className="h-px flex-1 bg-gradient-to-l from-transparent via-gold to-gold-deep" />
+          </div>
+
+          {/* Royal date & destination plaque */}
+          <div className="mt-4 flex justify-center sm:mt-5">
+            <div className="relative inline-flex flex-col items-center gap-1 overflow-hidden rounded-md bg-gradient-royal px-5 py-2 shadow-royal transition-transform hover:scale-105 sm:px-6 sm:py-3 sm:gap-1.5">
+              <span aria-hidden className="pointer-events-none absolute inset-0 royal-plaque-shimmer" />
+              <p className="relative font-display text-[0.6rem] tracking-[0.25em] text-ivory sm:text-[0.7rem] font-medium">
+                {couple.weddingDate.toUpperCase()}
+              </p>
+              <span aria-hidden className="relative h-px w-10 bg-gold/70" />
+              <p className="relative font-display text-[0.6rem] tracking-[0.25em] text-ivory sm:text-[0.7rem] font-medium">
+                {couple.destination.toUpperCase()}
+              </p>
+            </div>
+          </div>
+
+          {/* Bottom flourish */}
+          <div className="mt-4 mb-2 flex justify-center sm:mt-5 sm:mb-4">
+            <svg viewBox="0 0 120 12" className="h-3 w-28 text-gold-deep/70 sm:w-32 lg:w-32" aria-hidden>
+              <path d="M2 6 Q30 -4 60 6 Q90 16 118 6" fill="none" stroke="currentColor" strokeWidth="0.8" />
+              <circle cx="60" cy="6" r="1.5" fill="currentColor" />
+              <circle cx="20" cy="6" r="0.8" fill="currentColor" />
+              <circle cx="100" cy="6" r="0.8" fill="currentColor" />
+            </svg>
           </div>
         </div>
       </div>

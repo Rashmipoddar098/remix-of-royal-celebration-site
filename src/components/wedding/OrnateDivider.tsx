@@ -6,7 +6,7 @@ interface Props {
 
 export function OrnateDivider({ className = "" }: Props) {
   return (
-    <div className={`flex items-center justify-center py-10 ${className}`}>
+    <div className={`flex items-center justify-center py-6 sm:py-8 ${className}`}>
       <img
         src={mandala}
         alt=""

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as RsvpRouteImport } from './routes/rsvp'
 import { Route as InvitationRouteImport } from './routes/invitation'
 import { Route as FamilyRouteImport } from './routes/family'
+import { Route as CountdownRouteImport } from './routes/countdown'
 import { Route as CelebrationRouteImport } from './routes/celebration'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -30,6 +31,11 @@ const FamilyRoute = FamilyRouteImport.update({
   path: '/family',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CountdownRoute = CountdownRouteImport.update({
+  id: '/countdown',
+  path: '/countdown',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CelebrationRoute = CelebrationRouteImport.update({
   id: '/celebration',
   path: '/celebration',
@@ -44,6 +50,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/celebration': typeof CelebrationRoute
+  '/countdown': typeof CountdownRoute
   '/family': typeof FamilyRoute
   '/invitation': typeof InvitationRoute
   '/rsvp': typeof RsvpRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/celebration': typeof CelebrationRoute
+  '/countdown': typeof CountdownRoute
   '/family': typeof FamilyRoute
   '/invitation': typeof InvitationRoute
   '/rsvp': typeof RsvpRoute
@@ -59,21 +67,36 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/celebration': typeof CelebrationRoute
+  '/countdown': typeof CountdownRoute
   '/family': typeof FamilyRoute
   '/invitation': typeof InvitationRoute
   '/rsvp': typeof RsvpRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/celebration' | '/family' | '/invitation' | '/rsvp'
+  fullPaths:
+    | '/'
+    | '/celebration'
+    | '/countdown'
+    | '/family'
+    | '/invitation'
+    | '/rsvp'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/celebration' | '/family' | '/invitation' | '/rsvp'
-  id: '__root__' | '/' | '/celebration' | '/family' | '/invitation' | '/rsvp'
+  to: '/' | '/celebration' | '/countdown' | '/family' | '/invitation' | '/rsvp'
+  id:
+    | '__root__'
+    | '/'
+    | '/celebration'
+    | '/countdown'
+    | '/family'
+    | '/invitation'
+    | '/rsvp'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CelebrationRoute: typeof CelebrationRoute
+  CountdownRoute: typeof CountdownRoute
   FamilyRoute: typeof FamilyRoute
   InvitationRoute: typeof InvitationRoute
   RsvpRoute: typeof RsvpRoute
@@ -102,6 +125,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FamilyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/countdown': {
+      id: '/countdown'
+      path: '/countdown'
+      fullPath: '/countdown'
+      preLoaderRoute: typeof CountdownRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/celebration': {
       id: '/celebration'
       path: '/celebration'
@@ -122,6 +152,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CelebrationRoute: CelebrationRoute,
+  CountdownRoute: CountdownRoute,
   FamilyRoute: FamilyRoute,
   InvitationRoute: InvitationRoute,
   RsvpRoute: RsvpRoute,

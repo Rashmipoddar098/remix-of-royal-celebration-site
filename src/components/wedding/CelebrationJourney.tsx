@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { events, type WeddingEvent } from "@/data/wedding";
 import { OrnateDivider } from "./OrnateDivider";
+import { Calendar, Clock, Shirt, MapPin } from "lucide-react";
 
 const accentStyles: Record<
   WeddingEvent["accent"],
@@ -126,51 +127,42 @@ function EventCard({ event, index, isLast }: { event: WeddingEvent; index: numbe
             style={{ transformOrigin: isReverse ? "right center" : "left center" }}
           />
 
-          {/* Event details: Date / Time / Dress / Venue */}
-          <dl
-            className={`group-text-hover mt-6 grid w-full max-w-md grid-cols-1 gap-3 sm:grid-cols-2 ${isReverse ? "lg:ml-auto" : ""} ${visible ? "animate-fade-up" : "opacity-0"}`}
-            style={{ animationDelay: "420ms" }}
+          {/* Ornate detail card */}
+          <div
+            className={`mt-6 relative rounded-2xl border border-gold/30 bg-card/70 p-4 sm:p-6 shadow-card backdrop-blur-sm ${visible ? "animate-fade-up" : "opacity-0"}`}
+            style={{ animationDelay: "560ms" }}
           >
-            {[
-              { label: "Date", value: event.date, icon: "📅" },
-              { label: "Time", value: event.time, icon: "⏰" },
-              { label: "Dress", value: event.dress, icon: "👗" },
-              { label: "Venue", value: event.venue, icon: "📍" },
-            ].map((d, i) => (
-              <div
-                key={d.label}
-                className={`group/detail relative overflow-hidden rounded-2xl border border-gold/40 bg-gradient-to-br from-ivory/90 via-ivory/70 to-gold/10 px-4 py-3.5 backdrop-blur-md shadow-[0_4px_18px_-6px_rgba(168,106,46,0.25)] transition-all duration-500 hover:-translate-y-1 hover:border-gold hover:shadow-gold ${isReverse ? "lg:text-right" : ""}`}
-                style={{ animationDelay: `${500 + i * 80}ms` }}
-              >
-                {/* Corner gold accents */}
-                <span aria-hidden className="pointer-events-none absolute -left-px -top-px h-3 w-3 border-l-2 border-t-2 border-gold/70 rounded-tl-2xl" />
-                <span aria-hidden className="pointer-events-none absolute -right-px -bottom-px h-3 w-3 border-r-2 border-b-2 border-gold/70 rounded-br-2xl" />
-                {/* Continuous shimmer sweep */}
-                <span aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden opacity-60">
-                  <span className="royal-plaque-shimmer" />
-                </span>
-                {/* Soft animated glow on hover */}
-                <span aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-gold/0 via-gold/0 to-gold/30 opacity-0 transition-opacity duration-700 group-hover/detail:opacity-100" />
-
-                <div className={`relative flex items-start gap-3 ${isReverse ? "lg:flex-row-reverse lg:text-right" : ""}`}>
-                  <span
-                    aria-hidden
-                    className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${styles.badge} text-base shadow-gold ring-2 ring-ivory transition-transform duration-500 group-hover/detail:rotate-[12deg] group-hover/detail:scale-110`}
-                  >
-                    <span className="drop-shadow-sm">{d.icon}</span>
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <dt className="font-display text-[10px] uppercase tracking-[0.32em] text-shimmer-gold text-hover-track cursor-default">
-                      {d.label}
-                    </dt>
-                    <dd className="mt-1 font-serif-elegant text-sm text-maroon group-text-target sm:text-[15px] leading-snug transition-colors duration-300 group-hover/detail:text-vermilion">
-                      {d.value}
-                    </dd>
-                  </div>
-                </div>
+            <dl className={`grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 font-serif-elegant text-maroon/90 text-left text-stagger ${visible ? "is-visible" : ""}`}>
+              <div className="group-text-hover flex flex-col gap-1.5 rounded-xl border border-gold/10 bg-gold/5 p-3.5 transition-colors hover:bg-gold/10 hover:border-gold/30 sm:p-4">
+                <dt className="flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-gold-deep text-hover-track cursor-default">
+                  <Calendar className="h-3.5 w-3.5 text-gold-deep" />
+                  Date
+                </dt>
+                <dd className="text-base sm:text-lg group-text-target font-medium">{event.date}</dd>
               </div>
-            ))}
-          </dl>
+              <div className="group-text-hover flex flex-col gap-1.5 rounded-xl border border-gold/10 bg-gold/5 p-3.5 transition-colors hover:bg-gold/10 hover:border-gold/30 sm:p-4">
+                <dt className="flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-gold-deep text-hover-track cursor-default">
+                  <Clock className="h-3.5 w-3.5 text-gold-deep" />
+                  Time
+                </dt>
+                <dd className="text-base sm:text-lg group-text-target font-medium">{event.time}</dd>
+              </div>
+              <div className="col-span-1 sm:col-span-2 group-text-hover flex flex-col gap-1.5 rounded-xl border border-gold/10 bg-gold/5 p-3.5 transition-colors hover:bg-gold/10 hover:border-gold/30 sm:p-4">
+                <dt className="flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-gold-deep text-hover-track cursor-default">
+                  <Shirt className="h-3.5 w-3.5 text-gold-deep" />
+                  Dress Code
+                </dt>
+                <dd className="text-base sm:text-lg group-text-target font-medium">{event.dress}</dd>
+              </div>
+              <div className="col-span-1 sm:col-span-2 group-text-hover flex flex-col gap-1.5 rounded-xl border border-gold/10 bg-gold/5 p-3.5 transition-colors hover:bg-gold/10 hover:border-gold/30 sm:p-4">
+                <dt className="flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-gold-deep text-hover-track cursor-default">
+                  <MapPin className="h-3.5 w-3.5 text-gold-deep" />
+                  Venue
+                </dt>
+                <dd className="text-base leading-snug sm:text-lg group-text-target font-medium">{event.venue}</dd>
+              </div>
+            </dl>
+          </div>
 
           <a
             href={event.mapUrl}
@@ -203,11 +195,7 @@ export function CelebrationJourney() {
   return (
     <section
       id="journey"
-      className="relative overflow-hidden px-4 py-20 sm:py-24 md:py-28"
-      style={{
-        background:
-          "radial-gradient(1200px 600px at 50% -10%, color-mix(in oklab, var(--gold) 18%, transparent), transparent 60%), radial-gradient(900px 500px at 100% 100%, color-mix(in oklab, var(--vermilion) 14%, transparent), transparent 65%), radial-gradient(800px 500px at 0% 80%, color-mix(in oklab, var(--kesar) 16%, transparent), transparent 60%), linear-gradient(180deg, var(--ivory) 0%, oklch(0.95 0.04 80) 50%, var(--ivory) 100%)",
-      }}
+      className="relative overflow-hidden px-4 pt-12 pb-1 sm:pt-16 sm:pb-2"
     >
       {/* Subtle paisley/mandala SVG pattern overlay */}
       <div
@@ -222,7 +210,6 @@ export function CelebrationJourney() {
 
       {/* Top & bottom ornate borders */}
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-transparent via-gold/70 to-transparent" />
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-1.5 bg-gradient-to-r from-transparent via-gold/70 to-transparent" />
 
       {/* Decorative animated glow orbs */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -266,7 +253,7 @@ export function CelebrationJourney() {
           </div>
 
           <h2
-            className="mt-4 font-display text-4xl leading-tight sm:text-5xl md:text-6xl animate-letter-rise"
+            className="mt-4 font-display text-4xl leading-tight sm:text-5xl md:text-6xl animate-letter-rise pb-2"
             style={{ animationDelay: "200ms" }}
           >
             <span className="text-shimmer-royal animate-text-glow text-hover-shimmer cursor-default">Celebration Journey</span>

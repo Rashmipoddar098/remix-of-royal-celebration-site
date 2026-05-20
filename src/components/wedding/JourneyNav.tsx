@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 export type JourneyStep = {
-  to: "/invitation" | "/celebration" | "/family" | "/rsvp";
+  to: "/invitation" | "/celebration" | "/family" | "/countdown" | "/rsvp";
   label: string;
   short: string;
 };
@@ -10,7 +10,8 @@ export const journeySteps: JourneyStep[] = [
   { to: "/invitation", label: "The Invitation", short: "Invite" },
   { to: "/celebration", label: "Celebration Journey", short: "Events" },
   { to: "/family", label: "Family & Memories", short: "Family" },
-  { to: "/rsvp", label: "RSVP & Blessings", short: "RSVP" },
+  { to: "/countdown", label: "The Countdown", short: "Countdown" },
+  { to: "/rsvp", label: "RSVP & Contacts", short: "RSVP" },
 ];
 
 interface JourneyNavProps {
@@ -26,93 +27,80 @@ export function JourneyNav({ currentIndex, embedded = false }: JourneyNavProps) 
   return (
     <nav
       aria-label="Wedding journey navigation"
-      className={`relative mx-auto w-full max-w-3xl px-4 ${
+      className={`relative w-full ${
         embedded ? "" : "mt-10 mb-8"
       }`}
     >
-      {/* Compact inline row: prev | dots | next */}
-      <div className="flex items-center justify-between gap-3 sm:gap-5">
-        {/* Prev */}
-        <div className="flex-1">
-          {prev ? (
-            <Link
-              to={prev.to}
-              className="group inline-flex items-center gap-2 rounded-full border border-gold/40 bg-card/70 px-3 py-2 font-display text-[10px] uppercase tracking-[0.2em] text-maroon backdrop-blur-sm transition-all hover:border-gold hover:bg-card hover:shadow-card sm:gap-2.5 sm:px-4 sm:py-2.5 sm:text-[11px]"
-            >
-              <span
-                aria-hidden
-                className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-gold/40 text-maroon transition-transform group-hover:-translate-x-0.5 sm:h-6 sm:w-6"
+      <div className="mx-auto w-full max-w-5xl px-4 pt-1 pb-4 sm:px-6">
+        {/* Compact inline row: prev | dots | next */}
+        <div className="flex items-center justify-between gap-3 sm:gap-5">
+          {/* Prev */}
+          <div className="flex-1">
+            {prev ? (
+              <Link
+                to={prev.to}
+                className="group inline-flex items-center gap-2 rounded-full border border-gold/50 bg-gradient-to-r from-maroon/80 to-maroon/60 px-3 py-2 font-display text-[10px] uppercase tracking-[0.2em] text-gold backdrop-blur-sm shadow-[0_2px_12px_rgba(107,33,33,0.25)] transition-all duration-300 hover:border-gold hover:from-maroon hover:to-maroon/90 hover:shadow-[0_4px_18px_rgba(107,33,33,0.4)] hover:scale-[1.03] sm:px-4 sm:py-2.5 sm:text-[11px] sm:gap-2.5"
               >
-                ←
-              </span>
-              <span className="hidden sm:inline">{prev.short}</span>
-            </Link>
-          ) : (
-            <span aria-hidden />
-          )}
-        </div>
-
-        {/* Center dots */}
-        <ol className="flex items-center justify-center gap-2 sm:gap-2.5">
-          {journeySteps.map((step, i) => {
-            const isActive = i === currentIndex;
-            const isDone = i < currentIndex;
-            return (
-              <li key={step.to}>
-                <Link
-                  to={step.to}
-                  aria-label={`Go to ${step.label}`}
-                  aria-current={isActive ? "page" : undefined}
-                  className="group block"
+                <span
+                  aria-hidden
+                  className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-gold/50 text-gold/90 transition-transform duration-300 group-hover:-translate-x-0.5 sm:h-6 sm:w-6"
                 >
-                  <span
-                    className={`relative flex h-2.5 w-2.5 items-center justify-center rounded-full transition-all duration-500 sm:h-3 sm:w-3 ${
-                      isActive
-                        ? "bg-gradient-royal scale-125 shadow-gold"
-                        : isDone
-                        ? "bg-gold"
-                        : "bg-gold/30 group-hover:bg-gold/60"
-                    }`}
-                  >
-                    {isActive && (
-                      <span className="absolute inset-0 animate-ping rounded-full bg-vermilion/50" />
-                    )}
-                  </span>
-                </Link>
-              </li>
-            );
-          })}
-        </ol>
+                  ←
+                </span>
+                <span>{prev.short}</span>
+              </Link>
+            ) : (
+              <span aria-hidden />
+            )}
+          </div>
 
-        {/* Next */}
-        <div className="flex flex-1 justify-end">
-          {next ? (
-            <Link
-              to={next.to}
-              className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-gradient-royal px-4 py-2.5 font-display text-[10px] uppercase tracking-[0.25em] text-ivory shadow-royal transition-all hover:scale-[1.04] sm:gap-3 sm:px-5 sm:py-3 sm:text-[11px]"
-            >
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-0 royal-plaque-shimmer"
-              />
-              <span className="relative hidden sm:inline">{next.short}</span>
-              <span
-                aria-hidden
-                className="relative inline-flex h-6 w-6 items-center justify-center rounded-full bg-ivory/15 text-ivory ring-1 ring-gold/50 transition-transform group-hover:translate-x-0.5 sm:h-7 sm:w-7"
+          {/* Next — Premium Royal CTA */}
+          <div className="flex flex-1 justify-end">
+            {next ? (
+              <Link
+                to={next.to}
+                className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full border border-gold/70 bg-gradient-to-r from-maroon via-vermilion/90 to-maroon px-4 py-2.5 font-display text-[11px] uppercase tracking-[0.25em] text-gold shadow-[0_4px_20px_rgba(107,33,33,0.45),0_0_0_1px_rgba(212,175,55,0.2)] transition-all duration-300 hover:scale-[1.06] hover:shadow-[0_6px_28px_rgba(107,33,33,0.6),0_0_0_2px_rgba(212,175,55,0.35)] hover:border-gold sm:gap-3 sm:px-5 sm:py-3 sm:text-[12px]"
               >
-                →
-              </span>
-            </Link>
-          ) : (
-            <Link
-              to="/"
-              className="group inline-flex items-center gap-2 rounded-full border border-gold/40 bg-card/70 px-4 py-2.5 font-display text-[10px] uppercase tracking-[0.25em] text-maroon backdrop-blur-sm transition-all hover:border-gold hover:bg-card sm:px-5 sm:text-[11px]"
-            >
-              <span aria-hidden>✦</span>
-              <span className="hidden sm:inline">Home</span>
-            </Link>
-          )}
+                {/* Gold shimmer sweep */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-gradient-to-r from-transparent via-gold/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"
+                />
+                {/* Subtle inner glow */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{ background: "radial-gradient(ellipse at center, rgba(212,175,55,0.12), transparent 70%)" }}
+                />
+                <span className="relative font-semibold tracking-[0.3em]">{next.short}</span>
+                <span
+                  aria-hidden
+                  className="relative inline-flex h-6 w-6 items-center justify-center rounded-full border border-gold/60 bg-gold/15 text-gold transition-all duration-300 group-hover:bg-gold/25 group-hover:border-gold group-hover:translate-x-1 sm:h-7 sm:w-7"
+                >
+                  →
+                </span>
+              </Link>
+            ) : (
+              <Link
+                to="/"
+                className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full border border-gold/70 bg-gradient-to-r from-maroon via-vermilion/90 to-maroon px-4 py-2.5 font-display text-[11px] uppercase tracking-[0.25em] text-gold shadow-[0_4px_20px_rgba(107,33,33,0.45)] transition-all duration-300 hover:scale-[1.06] hover:shadow-[0_6px_28px_rgba(107,33,33,0.6)] sm:px-5 sm:py-3 sm:text-[12px]"
+              >
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 -translate-x-full skew-x-[-20deg] bg-gradient-to-r from-transparent via-gold/20 to-transparent transition-transform duration-700 group-hover:translate-x-full"
+                />
+                <span aria-hidden className="text-gold/80">✦</span>
+                <span className="relative font-semibold tracking-[0.3em]">Home</span>
+              </Link>
+            )}
+          </div>
         </div>
+      </div>
+
+      {/* Premium ornate bottom border running full-width */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 select-none">
+        <div className="h-[2px] bg-gradient-to-r from-transparent via-gold-deep to-transparent" />
+        <div className="mt-0.5 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
       </div>
     </nav>
   );

@@ -1,31 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { FamilyMemories } from "@/components/wedding/FamilyMemories";
+import { CountdownSection } from "@/components/wedding/CountdownSection";
 import { JourneyNav } from "@/components/wedding/JourneyNav";
 import { couple } from "@/data/wedding";
 
-export const Route = createFileRoute("/family")({
+export const Route = createFileRoute("/countdown")({
   head: () => ({
     meta: [
-      { title: `Family & Memories — ${couple.brideFirst} & ${couple.groomFirst}` },
+      { title: `Countdown — ${couple.brideFirst} & ${couple.groomFirst}` },
       {
         name: "description",
-        content: `With the blessings of our families — meet the Sharma & Rajvanshi households and our cherished moments.`,
+        content: `Counting the moments until we start our forever. Stay tuned for the big day!`,
       },
       {
         property: "og:title",
-        content: `Family & Memories — ${couple.brideFirst} & ${couple.groomFirst}`,
-      },
-      {
-        property: "og:description",
-        content: `Pages from a story still being written — captured in light and love.`,
+        content: `Countdown — ${couple.brideFirst} & ${couple.groomFirst}`,
       },
       { property: "og:type", content: "website" },
     ],
   }),
-  component: FamilyPage,
+  component: CountdownPage,
 });
 
-function FamilyPage() {
+function CountdownPage() {
   return (
     <main 
       className="flex flex-col min-h-screen overflow-x-hidden animate-fade-in-soft"
@@ -39,7 +35,7 @@ function FamilyPage() {
     >
       <div className="absolute left-4 top-4 z-20 sm:left-6 sm:top-6">
         <Link
-          to="/celebration"
+          to="/family"
           className="group inline-flex items-center gap-2 sm:gap-3 rounded-full border border-gold/40 bg-gradient-to-r from-maroon/95 to-maroon/80 px-5 py-2.5 sm:px-7 sm:py-3.5 font-display text-sm sm:text-base uppercase tracking-[0.2em] sm:tracking-[0.25em] text-gold backdrop-blur-md shadow-[0_4px_15px_rgba(107,33,33,0.3)] transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_25px_rgba(107,33,33,0.4)] hover:border-gold/70"
         >
           <span aria-hidden className="text-lg transition-transform duration-300 group-hover:-translate-x-1">←</span> Back
@@ -47,9 +43,9 @@ function FamilyPage() {
       </div>
 
       <div className="flex-1 relative flex flex-col justify-center">
-        <FamilyMemories />
+        <CountdownSection />
         <div className="relative z-10">
-          <JourneyNav currentIndex={2} embedded />
+          <JourneyNav currentIndex={3} embedded />
         </div>
       </div>
     </main>

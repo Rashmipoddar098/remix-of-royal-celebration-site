@@ -69,17 +69,17 @@ export function SacredWelcome({ onOpen }: Props) {
   return (
     <section
       id="welcome"
-      className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#2a0508] px-4 py-20"
+      className="relative flex h-[100dvh] w-full items-center justify-center overflow-hidden bg-[#2a0508] px-4 py-4 sm:py-8"
     >
-      {/* Royal rose archway background — same object-cover treatment on all viewports for consistent layout */}
-      <div className="pointer-events-none absolute inset-0">
+      {/* Royal rose archway background */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <img
           src={archwayBg}
           alt=""
           aria-hidden
           width={1080}
           height={1920}
-          className="h-full w-full object-cover object-[center_30%]"
+          className="absolute top-0 left-0 w-full h-[120vh] object-cover object-[center_top] sm:h-full sm:object-[center_30%]"
         />
         {/* Side fades blend image edges with backdrop on wide screens */}
         <div className="absolute inset-y-0 left-0 hidden w-32 bg-gradient-to-r from-[#2a0508] to-transparent md:block lg:w-56" />
@@ -146,50 +146,50 @@ export function SacredWelcome({ onOpen }: Props) {
       </div>
 
       <div className="relative z-10 flex max-w-3xl flex-col items-center text-center">
-        {/* Sacred top line — appears AFTER curtains open */}
+        {/* Sacred top line */}
         <p
-          className={`font-serif-elegant text-sm uppercase tracking-[0.45em] text-gold drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] ${
+          className={`font-serif-elegant text-[3vw] sm:text-sm uppercase tracking-[0.25em] sm:tracking-[0.45em] text-gold drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] ${
             mounted ? "animate-fade-in-soft delay-curtain" : "opacity-0"
           }`}
         >
-          ॥ Shree Ganeshaya Namah ॥
+          ।। Shree Ganeshaya Namah ।।
         </p>
 
         {/* Ganesh seal */}
-        <div className={`relative mt-8 ${mounted ? "animate-scale-reveal delay-curtain-200" : "opacity-0"}`}>
+        <div className={`relative mt-[4vw] sm:mt-6 md:mt-8 ${mounted ? "animate-scale-reveal delay-curtain-200" : "opacity-0"}`}>
           <div className="absolute inset-0 animate-glow-pulse" />
           <img
             src={ganeshSeal}
             alt="Lord Ganesha — invocation seal"
             width={1024}
             height={1024}
-            className="relative h-44 w-44 sm:h-56 sm:w-56 animate-float-soft drop-shadow-[0_6px_24px_rgba(0,0,0,0.55)]"
+            className="relative h-[18vw] w-[18vw] sm:h-24 sm:w-24 md:h-36 md:w-36 animate-float-soft drop-shadow-[0_6px_24px_rgba(0,0,0,0.55)]"
           />
         </div>
 
-        <div className={`mt-10 ${mounted ? "animate-fade-up delay-curtain-400" : "opacity-0"}`}>
-          <p className="font-serif-elegant text-base italic text-ivory/85 drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]">A sacred invitation for</p>
-          <p className="mt-2 font-script text-5xl text-gold sm:text-6xl drop-shadow-[0_3px_12px_rgba(0,0,0,0.6)]">{guestName}</p>
+        <div className={`mt-[4vw] sm:mt-5 md:mt-8 ${mounted ? "animate-fade-up delay-curtain-400" : "opacity-0"}`}>
+          <p className="font-serif-elegant text-[3.5vw] sm:text-sm md:text-base italic text-ivory/85 drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]">A sacred invitation for</p>
+          <p className="mt-[1vw] sm:mt-2 font-script text-[10vw] leading-none sm:text-4xl md:text-6xl text-gold drop-shadow-[0_3px_12px_rgba(0,0,0,0.6)]">{guestName}</p>
         </div>
 
         {/* Couple */}
-        <div className={`mt-10 flex items-center gap-6 ${mounted ? "animate-fade-up delay-curtain-600" : "opacity-0"}`}>
-          <h1 className="font-display text-4xl text-ivory sm:text-6xl drop-shadow-[0_3px_14px_rgba(0,0,0,0.65)]">{couple.brideFirst}</h1>
-          <span className="font-script text-5xl text-gold sm:text-6xl drop-shadow-[0_3px_10px_rgba(0,0,0,0.6)]">&amp;</span>
-          <h1 className="font-display text-4xl text-ivory sm:text-6xl drop-shadow-[0_3px_14px_rgba(0,0,0,0.65)]">{couple.groomFirst}</h1>
+        <div className={`mt-[4vw] sm:mt-5 md:mt-8 flex flex-wrap justify-center items-center gap-[1.5vw] sm:gap-6 ${mounted ? "animate-fade-up delay-curtain-600" : "opacity-0"}`}>
+          <h1 className="font-display text-[8vw] sm:text-4xl md:text-6xl text-ivory drop-shadow-[0_3px_14px_rgba(0,0,0,0.65)]">{couple.brideFirst}</h1>
+          <span className="font-script text-[8vw] sm:text-4xl md:text-6xl text-gold drop-shadow-[0_3px_10px_rgba(0,0,0,0.6)]">&amp;</span>
+          <h1 className="font-display text-[8vw] sm:text-4xl md:text-6xl text-ivory drop-shadow-[0_3px_14px_rgba(0,0,0,0.65)]">{couple.groomFirst}</h1>
         </div>
 
-        <div className={`mt-6 gold-divider w-48 ${mounted ? "animate-fade-in-soft delay-curtain-600" : "opacity-0"}`} />
+        <div className={`mt-[4vw] sm:mt-5 md:mt-6 gold-divider w-[25vw] sm:w-48 ${mounted ? "animate-fade-in-soft delay-curtain-600" : "opacity-0"}`} />
 
-        <div className={`mt-6 space-y-1 ${mounted ? "animate-fade-up delay-curtain-800" : "opacity-0"}`}>
-          <p className="font-display text-base tracking-[0.3em] text-ivory sm:text-lg drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
+        <div className={`mt-[4vw] sm:mt-5 md:mt-6 space-y-1 ${mounted ? "animate-fade-up delay-curtain-800" : "opacity-0"}`}>
+          <p className="font-display text-[2.5vw] sm:text-sm md:text-lg tracking-[0.2em] sm:tracking-[0.3em] text-ivory drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
             {couple.weddingDate.toUpperCase()}
           </p>
-          <p className="font-serif-elegant text-lg italic text-ivory/80 drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]">{couple.destination}</p>
+          <p className="font-serif-elegant text-[3vw] sm:text-sm md:text-lg italic text-ivory/80 drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]">{couple.destination}</p>
         </div>
 
         <div
-          className={`relative mt-12 ${mounted ? "animate-fade-up delay-curtain-1000" : "opacity-0"}`}
+          className={`relative mt-[6vw] sm:mt-6 md:mt-10 ${mounted ? "animate-fade-up delay-curtain-1000" : "opacity-0"}`}
         >
           {/* Outer pulsing royal glow */}
           <div className="absolute -inset-3 rounded-full bg-gradient-to-r from-vermilion/40 via-gold/40 to-vermilion/40 opacity-70 blur-xl animate-glow-pulse" />
@@ -198,7 +198,7 @@ export function SacredWelcome({ onOpen }: Props) {
             onClick={handleOpenClick}
             disabled={bursting}
             aria-label="Open the wedding invitation"
-            className="group relative inline-flex items-center gap-2 sm:gap-4 overflow-hidden rounded-full px-7 py-3.5 sm:px-12 sm:py-5 font-display text-[11px] sm:text-sm uppercase tracking-[0.3em] sm:tracking-[0.4em] text-ivory transition-all duration-500 hover:scale-[1.04] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#2a0508]"
+            className="group relative inline-flex items-center gap-[1.5vw] sm:gap-4 overflow-hidden rounded-full px-[6vw] py-[3vw] sm:px-10 sm:py-4 md:px-12 md:py-5 font-display text-[3vw] sm:text-[11px] md:text-sm uppercase tracking-[0.2em] sm:tracking-[0.4em] text-ivory transition-all duration-500 hover:scale-[1.04] active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#2a0508]"
             style={{
               background:
                 "linear-gradient(135deg, #6a0f1c 0%, #a01a2a 35%, #d4af37 50%, #a01a2a 65%, #4a0a13 100%)",
@@ -232,16 +232,12 @@ export function SacredWelcome({ onOpen }: Props) {
           </button>
 
           {/* Decorative under-line flourish */}
-          <div className="mt-3 flex items-center justify-center gap-2">
-            <span className="h-px w-8 bg-gradient-to-r from-transparent to-gold/60" />
+          <div className="mt-2 sm:mt-3 flex items-center justify-center gap-2">
+            <span className="h-px w-6 sm:w-8 bg-gradient-to-r from-transparent to-gold/60" />
             <span className="h-1 w-1 rounded-full bg-gold/80" />
-            <span className="h-px w-8 bg-gradient-to-l from-transparent to-gold/60" />
+            <span className="h-px w-6 sm:w-8 bg-gradient-to-l from-transparent to-gold/60" />
           </div>
         </div>
-
-        <p className={`mt-4 font-serif-elegant text-xs italic text-ivory/70 drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)] ${mounted ? "animate-fade-in-soft delay-curtain-1000" : "opacity-0"}`}>
-          Scroll gently — the chapters await.
-        </p>
       </div>
 
       {/* GRAND CRACKER CELEBRATION OVERLAY — fires on Open Invitation click */}
