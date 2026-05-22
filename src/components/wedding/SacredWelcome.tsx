@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import ganeshSeal from "@/assets/ganesh-seal.png";
 import archwayBg from "@/assets/welcome-archway-bg.jpg";
 import { couple, guestName } from "@/data/wedding";
+import { RoyalBackground } from "./RoyalBackground";
 
 interface Props {
   onOpen: () => void;
@@ -71,21 +72,23 @@ export function SacredWelcome({ onOpen }: Props) {
       id="welcome"
       className="relative flex h-[100dvh] w-full items-center justify-center overflow-hidden bg-[#2a0508] px-4 py-4 sm:py-8"
     >
+      <RoyalBackground variant="dark" idPrefix="sw" />
+
       {/* Royal rose archway background */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
         <img
           src={archwayBg}
           alt=""
           aria-hidden
           width={1080}
           height={1920}
-          className="absolute top-0 left-0 w-full h-[120vh] object-cover object-[center_top] sm:h-full sm:object-[center_30%]"
+          className="absolute top-0 left-0 w-full h-[120vh] object-cover object-[center_top] sm:h-full sm:object-[center_30%] opacity-40 mix-blend-luminosity"
         />
         {/* Side fades blend image edges with backdrop on wide screens */}
         <div className="absolute inset-y-0 left-0 hidden w-32 bg-gradient-to-r from-[#2a0508] to-transparent md:block lg:w-56" />
         <div className="absolute inset-y-0 right-0 hidden w-32 bg-gradient-to-l from-[#2a0508] to-transparent md:block lg:w-56" />
         {/* Subtle darken for legibility — keep image visible */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/55" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/70" />
         {/* Soft golden glow at top */}
         <div className="absolute left-1/2 top-0 h-40 w-[140%] -translate-x-1/2 bg-gradient-to-b from-gold/20 to-transparent blur-2xl" />
       </div>

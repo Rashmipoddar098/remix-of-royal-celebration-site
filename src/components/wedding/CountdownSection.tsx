@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { couple } from "@/data/wedding";
+import { couple, guestName } from "@/data/wedding";
 import { OrnateDivider } from "./OrnateDivider";
+import { RoyalBackground } from "./RoyalBackground";
 
 function useCountdown(target: string) {
   const [time, setTime] = useState(() => diff(target));
@@ -61,7 +62,7 @@ function BlessingMarquee({ items, direction = "left", speed = 25 }: { items: Ble
         {duplicatedItems.map((b, idx) => (
           <motion.div
             key={idx}
-            className="w-[280px] sm:w-[350px] flex-shrink-0 group relative overflow-hidden rounded-2xl bg-gradient-to-b from-card to-ivory p-5 sm:p-6 shadow-card transition-all duration-500 hover:shadow-royal hover:scale-[1.04] border border-gold/15 cursor-pointer"
+            className="w-[280px] sm:w-[350px] flex-shrink-0 group relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-ivory/95 via-ivory/70 to-ivory/90 backdrop-blur-xl p-6 sm:p-8 shadow-[0_8px_32px_rgba(200,169,81,0.15)] transition-all duration-700 hover:shadow-[0_15px_40px_rgba(212,175,55,0.35)] hover:-translate-y-3 hover:scale-[1.06] border border-white/60 cursor-pointer"
             animate={{ y: [0, -6, 0] }}
             transition={{
               duration: 4.5 + (idx % 3),
@@ -223,7 +224,6 @@ export function CountdownSection() {
 
   // State management for Dynamic blessings
   const [wishes, setWishes] = useState<Blessing[]>(INITIAL_BLESSINGS);
-  const [guestName, setGuestName] = useState("");
   const [blessingText, setBlessingText] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -246,19 +246,18 @@ export function CountdownSection() {
 
   const handleSubmitBlessing = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!guestName.trim() || !blessingText.trim()) return;
+    if (!blessingText.trim()) return;
 
     const newBlessing: Blessing = {
       text: blessingText.trim(),
-      author: guestName.trim(),
+      author: guestName, // automatically grab from pre-populated guest data
     };
 
     const updated = [newBlessing, ...wishes];
     setWishes(updated);
     localStorage.setItem("wedding_wishes", JSON.stringify(updated));
 
-    // Reset inputs & trigger blossom burst success feedback
-    setGuestName("");
+    // Reset input & trigger blossom burst success feedback
     setBlessingText("");
     setIsSubmitted(true);
     setTimeout(() => setIsSubmitted(false), 4000);
@@ -272,14 +271,12 @@ export function CountdownSection() {
     <section
       id="countdown"
       className="relative overflow-hidden px-4 pt-12 pb-3 sm:pt-16"
+      style={{
+        background:
+          "radial-gradient(ellipse 120% 80% at 50% 0%, #FAF6EE 0%, #F6EDE2 45%, #ECDDBE 80%, #E8D5B0 100%)",
+      }}
     >
-      {/* Ambient glows */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden select-none">
-        <div className="absolute -top-24 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-gold/12 blur-3xl animate-glow-pulse" />
-        <div className="absolute bottom-0 left-0 h-64 w-64 rounded-full bg-vermilion/8 blur-3xl" />
-        <div className="absolute bottom-0 right-0 h-64 w-64 rounded-full bg-kesar/8 blur-3xl" />
-      </div>
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-gold-deep to-transparent select-none" />
+      <RoyalBackground idPrefix="cs" />
 
       <div className="relative mx-auto max-w-5xl">
 
@@ -512,24 +509,57 @@ export function CountdownSection() {
         {/* ── Blessing Wall ── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.8 }}
-          className="mt-2 text-center"
+          viewport={{ once: true }} transition={{ duration: 1, type: "spring", bounce: 0.4 }}
+          className="mt-2 text-center relative z-20"
         >
-          <p className="font-serif-elegant text-xs sm:text-sm uppercase tracking-[0.4em] text-gold-deep animate-text-glow">
-            Wishes &amp; Vows
-          </p>
-          <h3 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl text-gradient-royal drop-shadow-sm leading-tight">
+          <div className="inline-flex items-center gap-3">
+            <span aria-hidden className="h-px w-8 sm:w-12 bg-gradient-to-r from-transparent to-gold" />
+            <p className="font-serif-elegant text-xs sm:text-sm uppercase tracking-[0.4em] text-gold-deep drop-shadow-sm">
+              Wishes &amp; Vows
+            </p>
+            <span aria-hidden className="h-px w-8 sm:w-12 bg-gradient-to-l from-transparent to-gold" />
+          </div>
+          <h3 className="mt-4 font-display text-4xl sm:text-5xl md:text-6xl text-gradient-royal drop-shadow-md leading-tight animate-float-soft">
             Blessing Wall
           </h3>
-          <div className="mx-auto mt-4 gold-divider w-20" />
         </motion.div>
 
         {/* Dual dynamic scrolling marquees with background drifting sparks */}
         {wishes.length > 0 && (
-          <div className="mt-10 flex flex-col gap-2 overflow-hidden w-full relative">
+          <div className="mt-12 flex flex-col gap-4 overflow-hidden w-full relative pb-8">
             
-            {/* Ambient drifting golden embers behind marquees */}
+            {/* Majestic floating background lotuses/lanterns for deep animation */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <motion.div
+                  key={`bg-lotus-${i}`}
+                  className="absolute opacity-[0.08]"
+                  style={{
+                    left: `${20 + i * 25}%`,
+                    top: `${10 + (i % 2) * 50}%`,
+                    width: "120px",
+                    height: "120px",
+                  }}
+                  animate={{
+                    y: [0, -60, 0],
+                    rotate: [0, 10, -10, 0],
+                    scale: [1, 1.1, 1],
+                  }}
+                  transition={{
+                    duration: 15 + i * 2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: i * 1.5,
+                  }}
+                >
+                  <svg viewBox="0 0 100 100" fill="currentColor" className="text-gold-deep w-full h-full drop-shadow-[0_0_15px_rgba(212,175,55,0.8)]">
+                    <path d="M50 0 C60 30 90 40 100 50 C90 60 60 70 50 100 C40 70 10 60 0 50 C10 40 40 30 50 0 Z" />
+                    <circle cx="50" cy="50" r="15" fill="#FFE97A" />
+                  </svg>
+                </motion.div>
+              ))}
+
+              {/* Ambient drifting golden embers */}
               {[
                 { top: "10%", left: "5%", delay: 0.2, scale: 0.8 },
                 { top: "85%", left: "92%", delay: 0.8, scale: 1.2 },
@@ -539,13 +569,13 @@ export function CountdownSection() {
               ].map((spark, idx) => (
                 <motion.span
                   key={`ember-${idx}`}
-                  className="absolute h-2 w-2 rounded-full bg-kesar/15 blur-[1.5px]"
+                  className="absolute h-3 w-3 rounded-full bg-gradient-to-tr from-kesar to-gold blur-[1px] shadow-[0_0_10px_rgba(255,233,122,0.8)]"
                   style={{ top: spark.top, left: spark.left }}
                   animate={{
-                    y: [0, -40, 0],
-                    x: [0, 20, 0],
-                    opacity: [0.1, 0.45, 0.1],
-                    scale: [spark.scale, spark.scale * 1.5, spark.scale],
+                    y: [0, -60, 0],
+                    x: [0, 30, 0],
+                    opacity: [0.1, 0.7, 0.1],
+                    scale: [spark.scale, spark.scale * 1.8, spark.scale],
                   }}
                   transition={{
                     duration: 6 + idx,
@@ -558,8 +588,8 @@ export function CountdownSection() {
             </div>
 
             <div className="relative z-10">
-              <BlessingMarquee items={row1} direction="left" speed={28} />
-              <BlessingMarquee items={row2} direction="right" speed={32} />
+              <BlessingMarquee items={row1} direction="left" speed={35} />
+              <BlessingMarquee items={row2} direction="right" speed={40} />
             </div>
           </div>
         )}
@@ -569,10 +599,10 @@ export function CountdownSection() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="mt-6 mx-auto max-w-xl px-2 relative z-10"
+          transition={{ duration: 1, type: "spring", bounce: 0.3 }}
+          className="mt-6 mx-auto w-full max-w-xl px-2 relative z-10"
         >
-          <div className="group relative overflow-hidden rounded-3xl border border-gold/30 bg-gradient-to-b from-card to-ivory p-6 sm:p-8 shadow-card royal-card-tilt">
+          <div className="group relative overflow-hidden rounded-[2rem] border border-white/60 bg-gradient-to-br from-ivory/80 via-ivory/40 to-ivory/80 backdrop-blur-2xl p-8 sm:p-10 shadow-[0_10px_40px_rgba(212,175,55,0.2)] royal-card-tilt transition-all duration-700 hover:shadow-[0_20px_50px_rgba(212,175,55,0.3)]">
             {/* Success Confetti/Flower Petal Burst Shower */}
             {isSubmitted && (
               <div className="absolute inset-0 pointer-events-none overflow-hidden z-20">
@@ -616,19 +646,6 @@ export function CountdownSection() {
             <div className="mx-auto mt-3 mb-6 gold-divider w-20 select-none" />
 
             <form onSubmit={handleSubmitBlessing} className="relative z-10 flex flex-col gap-4">
-              <div>
-                <label className="block font-serif-elegant text-xs uppercase tracking-wider text-gold-deep mb-1.5">
-                  Guest Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={guestName}
-                  onChange={(e) => setGuestName(e.target.value)}
-                  placeholder="e.g., Priyanshu Rajvanshi"
-                  className="w-full rounded-xl border border-gold/25 bg-ivory/50 px-4 py-3 font-serif-elegant text-sm text-maroon placeholder-maroon/30 focus:border-gold-deep focus:ring-1 focus:ring-gold-deep focus:outline-none transition-all duration-300 shadow-inner"
-                />
-              </div>
 
               <div>
                 <label className="block font-serif-elegant text-xs uppercase tracking-wider text-gold-deep mb-1.5">
@@ -640,7 +657,7 @@ export function CountdownSection() {
                   value={blessingText}
                   onChange={(e) => setBlessingText(e.target.value)}
                   placeholder="Type your heartfelt wishes..."
-                  className="w-full rounded-xl border border-gold/25 bg-ivory/50 px-4 py-3 font-serif-elegant text-sm text-maroon placeholder-maroon/30 focus:border-gold-deep focus:ring-1 focus:ring-gold-deep focus:outline-none transition-all duration-300 shadow-inner resize-none"
+                  className="w-full rounded-2xl border border-gold/40 bg-white/60 backdrop-blur-sm px-5 py-4 font-serif-elegant text-base text-maroon placeholder-maroon/40 focus:border-gold focus:ring-2 focus:ring-gold/30 focus:outline-none transition-all duration-500 shadow-inner resize-none focus:bg-white/90"
                 />
               </div>
 
@@ -662,9 +679,11 @@ export function CountdownSection() {
                   <motion.button
                     key="submit-btn"
                     type="submit"
-                    className="mt-2 w-full rounded-full border border-gold/60 bg-gradient-to-r from-maroon via-vermilion to-maroon py-3.5 font-serif-elegant text-sm sm:text-base italic text-ivory shadow-card transition-all duration-500 hover:scale-[1.02] hover:shadow-royal active:scale-95 cursor-pointer"
+                    className="relative mt-4 w-full overflow-hidden rounded-full border border-gold bg-gradient-to-r from-maroon via-vermilion to-maroon py-4 font-serif-elegant text-lg italic tracking-wider text-ivory shadow-[0_4px_20px_rgba(107,33,33,0.4)] transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_8px_30px_rgba(212,175,55,0.5)] active:scale-95 cursor-pointer group/btn"
                   >
-                    Send Blessing
+                    <span className="relative z-10">Send Blessing</span>
+                    {/* Glowing sweep over button */}
+                    <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-1000 ease-in-out group-hover/btn:translate-x-full" />
                   </motion.button>
                 )}
               </AnimatePresence>

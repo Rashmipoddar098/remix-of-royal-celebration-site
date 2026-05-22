@@ -1,13 +1,20 @@
 import { couple } from "@/data/wedding";
 import phereImg from "@/assets/bride-groom-phere.jpg";
 import phereVideo from "@/assets/bride-groom-phere-v3.mp4.asset.json";
+import { RoyalBackground } from "./RoyalBackground";
 
 export function InvitationReveal() {
   return (
     <section
       id="invitation"
       className="relative flex w-full flex-1 flex-col items-center overflow-hidden px-4 py-4 sm:py-8"
+      style={{
+        background:
+          "radial-gradient(ellipse 120% 80% at 50% 0%, #FAF6EE 0%, #F6EDE2 45%, #ECDDBE 80%, #E8D5B0 100%)",
+      }}
     >
+      <RoyalBackground idPrefix="ir" />
+
       {/* Layer 1 — Dense paisley/mandala SVG tile (subtle base texture) */}
       <div
         aria-hidden

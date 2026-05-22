@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { couple, guestName } from "@/data/wedding";
+import { RoyalBackground } from "./RoyalBackground";
 
 interface Props {
   onOpen: () => void;
@@ -90,6 +91,8 @@ export function RoyalEnvelope({ onOpen }: Props) {
       className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#15030a] px-4 py-10"
       aria-label="Royal wedding envelope"
     >
+      <RoyalBackground variant="dark" idPrefix="re" />
+
       {/* ===== Mandala + Particle Background ===== */}
       <div className="pointer-events-none absolute inset-0">
         {/* Deep radial base */}
@@ -270,38 +273,74 @@ export function RoyalEnvelope({ onOpen }: Props) {
 
             {/* ===== Letter inside ===== */}
             <div
-              className={`absolute left-[5%] right-[5%] top-[8%] bottom-[8%] overflow-hidden rounded-sm bg-gradient-to-b from-ivory via-[#fbf3df] to-sandal shadow-[inset_0_0_30px_rgba(120,20,30,0.18),0_8px_20px_rgba(0,0,0,0.35)] transition-all duration-[1700ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              className={`absolute left-[5%] right-[5%] top-[8%] bottom-[8%] overflow-hidden rounded-md bg-[#FFFaf0] shadow-[inset_0_0_40px_rgba(120,20,30,0.15),0_8px_20px_rgba(0,0,0,0.35)] transition-all duration-[1700ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
                 opening ? "-translate-y-[58%] scale-[1.03] rotate-[-0.5deg]" : "translate-y-0"
               }`}
               style={{ zIndex: 1, transitionDelay: opening ? "550ms" : "0ms" }}
             >
-              <div className="absolute inset-2 rounded-sm border border-gold-deep/45" />
-              <div className="absolute inset-[10px] rounded-sm border border-gold-deep/20" />
+              {/* Rich Paper Texture */}
+              <div className="absolute inset-0 bg-gradient-to-br from-ivory via-[#fdf7e6] to-[#f4e4c1] opacity-90" />
+              
+              {/* Grand Floral Watermark */}
+              <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.06]">
+                <svg viewBox="0 0 200 200" className="w-[120%] h-[120%] text-gold-deep animate-spin-slow" fill="currentColor">
+                  <path d="M100 0 C 120 40, 160 40, 200 100 C 160 160, 120 160, 100 200 C 80 160, 40 160, 0 100 C 40 40, 80 40, 100 0 Z" opacity="0.4"/>
+                  <path d="M100 20 C 115 50, 150 50, 180 100 C 150 150, 115 150, 100 180 C 85 150, 50 150, 20 100 C 50 50, 85 50, 100 20 Z" opacity="0.6"/>
+                  <circle cx="100" cy="100" r="30" opacity="0.6"/>
+                  <circle cx="100" cy="100" r="15" opacity="0.8"/>
+                </svg>
+              </div>
+
+              {/* Multiple Ornate Borders */}
+              <div className="absolute inset-2 rounded-sm border-2 border-gold/40" />
+              <div className="absolute inset-[11px] rounded-sm border border-dashed border-gold/30" />
+              <div className="absolute inset-[14px] rounded-sm border border-gold/15" />
 
               {/* Ornate corner flourishes */}
               {[
-                "left-1 top-1",
-                "right-1 top-1 rotate-90",
-                "right-1 bottom-1 rotate-180",
-                "left-1 bottom-1 -rotate-90",
+                "left-2 top-2",
+                "right-2 top-2 rotate-90",
+                "right-2 bottom-2 rotate-180",
+                "left-2 bottom-2 -rotate-90",
               ].map((pos, i) => (
-                <svg key={i} className={`absolute ${pos} h-6 w-6 sm:h-7 sm:w-7`} viewBox="0 0 28 28" fill="none" aria-hidden>
-                  <path d="M2 2 Q14 4 14 14 M2 2 Q4 14 14 14 M2 2 L10 2 M2 2 L2 10" stroke="#8a6018" strokeWidth="0.9" />
-                  <circle cx="14" cy="14" r="1.8" fill="#b8862d" />
-                  <circle cx="6" cy="6" r="1" fill="#d4af37" />
+                <svg key={i} className={`absolute ${pos} h-8 w-8 sm:h-10 sm:w-10 text-gold-deep`} viewBox="0 0 40 40" fill="none" aria-hidden>
+                  <path d="M4 4 Q20 8 20 20 M4 4 Q8 20 20 20 M4 4 L14 4 M4 4 L4 14" stroke="currentColor" strokeWidth="1.2" />
+                  <path d="M20 20 Q35 25 35 35 M20 20 Q25 35 35 35" stroke="currentColor" strokeWidth="0.8" opacity="0.6" />
+                  <circle cx="20" cy="20" r="2.5" fill="currentColor" />
+                  <circle cx="8" cy="8" r="1.5" fill="currentColor" opacity="0.8" />
                 </svg>
               ))}
 
-              <div className="flex h-full flex-col items-center justify-center px-4 text-center">
-                <p className="font-serif-elegant text-[9px] uppercase tracking-[0.35em] text-maroon/70 sm:text-[11px]">
-                  An invitation for
+              {/* Top Center Emblem */}
+              <div className="absolute top-4 left-1/2 -translate-x-1/2 flex flex-col items-center">
+                <div className="h-7 w-7 sm:h-9 sm:w-9 rounded-full border border-gold/60 bg-gradient-to-br from-gold/20 to-kesar/10 flex items-center justify-center shadow-[0_0_10px_rgba(212,175,55,0.3)]">
+                  <span className="text-[12px] sm:text-[14px] text-maroon drop-shadow-sm font-semibold">ॐ</span>
+                </div>
+              </div>
+
+              <div className="relative flex h-full flex-col items-center justify-center px-4 sm:px-6 text-center z-10 pt-6">
+                <p className="font-serif-elegant text-[9px] uppercase tracking-[0.4em] text-maroon/80 sm:text-[11px]">
+                  An Invitation For
                 </p>
-                <p className="mt-1 font-script text-2xl text-gold-deep sm:text-3xl">
-                  {guestName}
+                
+                <div className="relative mt-2 sm:mt-3">
+                  <span className="absolute -inset-2 bg-gold/10 blur-xl rounded-full" />
+                  <p className="relative font-script text-3xl sm:text-4xl lg:text-5xl text-maroon drop-shadow-md">
+                    {guestName}
+                  </p>
+                </div>
+                
+                <div className="my-3 sm:my-4 flex items-center gap-2">
+                  <span className="h-px w-8 sm:w-12 bg-gradient-to-r from-transparent to-gold/70" />
+                  <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rotate-45 bg-gradient-to-br from-gold to-gold-deep" />
+                  <span className="h-px w-8 sm:w-12 bg-gradient-to-l from-transparent to-gold/70" />
+                </div>
+                
+                <p className="font-serif-elegant text-[9px] sm:text-[11px] italic text-gold-deep/90">
+                  To celebrate the wedding of
                 </p>
-                <div className="my-2 h-px w-20 bg-gradient-to-r from-transparent via-gold-deep to-transparent" />
-                <p className="font-display text-[10px] tracking-[0.3em] text-maroon sm:text-xs">
-                  {couple.brideFirst.toUpperCase()} &amp; {couple.groomFirst.toUpperCase()}
+                <p className="mt-1 font-display text-[11px] sm:text-[13px] tracking-[0.25em] text-maroon font-semibold">
+                  {couple.brideFirst.toUpperCase()} <span className="text-gold">&amp;</span> {couple.groomFirst.toUpperCase()}
                 </p>
               </div>
             </div>

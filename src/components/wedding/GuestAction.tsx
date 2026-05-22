@@ -1,258 +1,640 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { contacts, couple, travel } from "@/data/wedding";
+import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
+import { familySides, couple, guestName } from "@/data/wedding";
 import { OrnateDivider } from "./OrnateDivider";
-import { Phone, MessageCircle, Plane, Hotel, CheckCircle2 } from "lucide-react";
+import { Phone, MessageCircle } from "lucide-react";
+import { RoyalBackground } from "./RoyalBackground";
 
-const PALETTE = ["#fde58a","#f4a261","#e76f51","#d4af37","#ff9a3c","#ffd86b","#ffffff","#ff6b9d","#c084fc","#34d399"];
+/* ─────────────────────────────────────────
+   FIREWORKS ENGINE
+───────────────────────────────────────── */
+const PALETTE = ["#fde58a","#f4a261","#e76f51","#d4af37","#ff9a3c","#ffd86b","#ffffff","#ff6b9d","#c084fc","#34d399","#fb923c","#a78bfa"];
 
 function useBursts() {
-  const centers = [
-    { id:"c",  x:50, y:45, delay:0,    scale:1.4 },
-    { id:"tl", x:18, y:25, delay:180,  scale:1.0 },
-    { id:"tr", x:82, y:22, delay:320,  scale:1.1 },
-    { id:"bl", x:22, y:68, delay:500,  scale:0.95},
-    { id:"br", x:78, y:65, delay:660,  scale:1.05},
-    { id:"t",  x:50, y:12, delay:820,  scale:1.2 },
-    { id:"l",  x:10, y:50, delay:950,  scale:0.9 },
-    { id:"r",  x:90, y:50, delay:1100, scale:0.9 },
-  ];
-  return centers.map(b => ({
+  return [
+    { id:"c",  x:50, y:40, delay:0,    scale:1.6 },
+    { id:"tl", x:15, y:20, delay:200,  scale:1.1 },
+    { id:"tr", x:85, y:18, delay:350,  scale:1.2 },
+    { id:"bl", x:20, y:70, delay:550,  scale:1.0 },
+    { id:"br", x:80, y:68, delay:720,  scale:1.1 },
+    { id:"t",  x:50, y:8,  delay:900,  scale:1.3 },
+    { id:"l",  x:8,  y:50, delay:1050, scale:0.95},
+    { id:"r",  x:92, y:50, delay:1200, scale:0.95},
+    { id:"m1", x:35, y:55, delay:400,  scale:1.0 },
+    { id:"m2", x:65, y:30, delay:600,  scale:1.0 },
+  ].map(b => ({
     ...b,
-    sparks: Array.from({ length: 36 }).map((_, i) => {
-      const angle = (i * 360) / 36 + Math.random() * 8;
-      const dist  = (90 + Math.random() * 140) * b.scale;
+    sparks: Array.from({ length: 42 }).map((_, i) => {
+      const angle = (i * 360) / 42;
+      const dist  = (100 + Math.random() * 160) * b.scale;
       const rad   = (angle * Math.PI) / 180;
       return {
         id: i,
         dx: Math.cos(rad) * dist,
         dy: Math.sin(rad) * dist,
-        delay: b.delay + Math.random() * 120,
-        duration: 900 + Math.random() * 600,
-        size: 3 + Math.random() * 6,
+        delay: b.delay + Math.random() * 150,
+        duration: 900 + Math.random() * 700,
+        size: 3 + Math.random() * 7,
         color: PALETTE[Math.floor(Math.random() * PALETTE.length)],
       };
     }),
   }));
 }
 
-function useRockets() {
-  return Array.from({ length: 12 }).map((_, i) => ({
-    id: i,
-    left: 5 + Math.random() * 90,
-    delay: i * 110 + Math.random() * 100,
-    duration: 650 + Math.random() * 250,
-  }));
-}
-
 function FireworksOverlay({ onDone }: { onDone: () => void }) {
   const bursts  = useBursts();
-  const rockets = useRockets();
-  useState(() => { const t = setTimeout(onDone, 3200); return () => clearTimeout(t); });
+  const rockets = Array.from({ length: 16 }).map((_, i) => ({
+    id: i,
+    left: 3 + (i * 6.2),
+    delay: i * 90 + Math.random() * 80,
+    duration: 600 + Math.random() * 300,
+  }));
+
+  useEffect(() => {
+    const t = setTimeout(onDone, 4000);
+    return () => clearTimeout(t);
+  }, [onDone]);
+
   return (
-    <div className="pointer-events-none fixed inset-0 z-[200] overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-radial from-gold/25 via-vermilion/10 to-transparent animate-fade-out" style={{ animationDuration:"1.4s" }} />
+    <div className="pointer-events-none fixed inset-0 z-[300] overflow-hidden">
+      {/* Full-screen golden flash */}
+      <motion.div
+        className="absolute inset-0"
+        style={{ background: "radial-gradient(ellipse at center, rgba(255,216,107,0.35) 0%, rgba(212,175,55,0.15) 40%, transparent 70%)" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: [0, 1, 0] }}
+        transition={{ duration: 1.4, ease: "easeOut" }}
+      />
+
+      {/* Rocket trails */}
       {rockets.map(r => (
-        <span key={`rkt-${r.id}`} className="absolute bottom-0 w-[3px] rounded-full"
-          style={{ left:`${r.left}%`, height:"65vh",
-            background:"linear-gradient(to top,transparent,#fde58a,#fff)",
-            animation:`rocket-rise ${r.duration}ms cubic-bezier(0.25,0.46,0.45,0.94) ${r.delay}ms both`,
-            filter:"drop-shadow(0 0 6px #ffd86b)" }} />
+        <span key={`rkt-${r.id}`}
+          className="absolute bottom-0 w-[3px] rounded-full"
+          style={{
+            left: `${r.left}%`,
+            height: "70vh",
+            background: "linear-gradient(to top,transparent,#fde58a,#fff)",
+            animation: `rocket-rise ${r.duration}ms cubic-bezier(0.25,0.46,0.45,0.94) ${r.delay}ms both`,
+            filter: "drop-shadow(0 0 8px #ffd86b)",
+          }}
+        />
       ))}
+
+      {/* Burst explosions */}
       {bursts.map(b => (
-        <div key={`burst-${b.id}`} className="absolute" style={{ left:`${b.x}%`, top:`${b.y}%`, transform:"translate(-50%,-50%)" }}>
-          <div className="absolute left-1/2 top-1/2 h-36 w-36 rounded-full"
-            style={{ background:"radial-gradient(circle,rgba(255,255,255,0.95) 0%,rgba(255,216,107,0.7) 35%,transparent 70%)", animation:`cracker-flash 750ms ease-out ${b.delay}ms both` }} />
-          <div className="absolute left-1/2 top-1/2 h-20 w-20 rounded-full border-2"
-            style={{ borderColor:"rgba(255,216,107,0.9)", animation:`cracker-ring 1100ms cubic-bezier(0.22,1,0.36,1) ${b.delay}ms both` }} />
+        <div key={`burst-${b.id}`}
+          className="absolute"
+          style={{ left: `${b.x}%`, top: `${b.y}%`, transform: "translate(-50%,-50%)" }}
+        >
+          <div className="absolute left-1/2 top-1/2 h-40 w-40 rounded-full"
+            style={{
+              background: "radial-gradient(circle,rgba(255,255,255,0.98) 0%,rgba(255,216,107,0.75) 30%,transparent 70%)",
+              animation: `cracker-flash 800ms ease-out ${b.delay}ms both`,
+            }}
+          />
+          <div className="absolute left-1/2 top-1/2 h-24 w-24 rounded-full border-2"
+            style={{
+              borderColor: "rgba(255,216,107,0.9)",
+              animation: `cracker-ring 1200ms cubic-bezier(0.22,1,0.36,1) ${b.delay}ms both`,
+            }}
+          />
           {b.sparks.map(s => (
-            <span key={`s-${b.id}-${s.id}`} className="cracker-spark absolute left-1/2 top-1/2 rounded-full"
-              style={{ width:`${s.size}px`, height:`${s.size}px`, background:s.color,
-                boxShadow:`0 0 ${s.size*2}px ${s.color},0 0 ${s.size*4}px ${s.color}`,
-                ["--bx" as never]:`${s.dx}px`, ["--by" as never]:`${s.dy}px`,
-                animationDelay:`${s.delay}ms`, animationDuration:`${s.duration}ms` }} />
+            <span key={`s-${b.id}-${s.id}`}
+              className="cracker-spark absolute left-1/2 top-1/2 rounded-full"
+              style={{
+                width: `${s.size}px`, height: `${s.size}px`,
+                background: s.color,
+                boxShadow: `0 0 ${s.size * 2}px ${s.color},0 0 ${s.size * 4}px ${s.color}`,
+                ["--bx" as never]: `${s.dx}px`,
+                ["--by" as never]: `${s.dy}px`,
+                animationDelay: `${s.delay}ms`,
+                animationDuration: `${s.duration}ms`,
+              }}
+            />
           ))}
         </div>
+      ))}
+
+      {/* Floating emoji confetti */}
+      {["🌸","✨","💛","🌹","💮","🎊","🎉","🌺","💫","🎆"].map((emoji, i) => (
+        <motion.span
+          key={`emoji-${i}`}
+          className="absolute text-2xl sm:text-3xl select-none"
+          style={{ left: `${5 + i * 9.5}%`, bottom: "0%" }}
+          initial={{ y: "100vh", opacity: 1, rotate: 0 }}
+          animate={{
+            y: [`${80 + Math.random() * 20}vh`, `${-10 - Math.random() * 20}vh`],
+            opacity: [1, 1, 0],
+            rotate: [0, 180 + Math.random() * 180],
+            x: [(Math.random() - 0.5) * 120],
+          }}
+          transition={{
+            duration: 2.5 + Math.random() * 1.5,
+            delay: 0.3 + i * 0.12,
+            ease: "easeOut",
+          }}
+        >
+          {emoji}
+        </motion.span>
       ))}
     </div>
   );
 }
 
-const stagger = { hidden:{opacity:0}, visible:{opacity:1,transition:{staggerChildren:0.12}} };
-const fadeUp  = { hidden:{opacity:0,y:24}, visible:{opacity:1,y:0,transition:{duration:0.7,ease:[0.22,1,0.36,1] as const}} };
+/* ─────────────────────────────────────────
+   ANIMATED ACCEPT BUTTON
+───────────────────────────────────────── */
+function AcceptButton({ onAccept, bursting }: { onAccept: () => void; bursting: boolean }) {
+  const [hovered, setHovered] = useState(false);
 
+  return (
+    <motion.button
+      onClick={onAccept}
+      disabled={bursting}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
+      whileHover={{ scale: 1.06 }}
+      whileTap={{ scale: 0.96 }}
+      className="relative w-full overflow-hidden rounded-full cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+      style={{
+        background: "linear-gradient(135deg, #6B2121 0%, #C0392B 40%, #E74C3C 60%, #D4AF37 100%)",
+        padding: "1px",
+        boxShadow: hovered
+          ? "0 0 40px rgba(212,175,55,0.6), 0 12px 40px rgba(107,33,33,0.5)"
+          : "0 6px 24px rgba(107,33,33,0.35)",
+      }}
+      transition={{ duration: 0.4 }}
+    >
+      {/* Inner gradient fill */}
+      <div className="relative flex items-center justify-center gap-3 rounded-full px-8 py-4 sm:py-5 overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #7B2D2D 0%, #C0392B 50%, #8B0000 100%)" }}>
+
+        {/* Animated shimmer sweep */}
+        <motion.div
+          className="absolute inset-0"
+          style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%)" }}
+          animate={{ x: hovered ? ["−100%", "200%"] : "-100%" }}
+          transition={{ duration: 0.9, ease: "easeInOut", repeat: hovered ? Infinity : 0 }}
+        />
+
+        {/* Pulsing glow ring */}
+        <motion.div
+          className="absolute inset-0 rounded-full"
+          style={{ border: "1px solid rgba(212,175,55,0.5)" }}
+          animate={{ opacity: [0.4, 1, 0.4], scale: [1, 1.02, 1] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        />
+
+        <motion.span
+          animate={hovered ? { rotate: [0, -20, 20, 0], scale: [1, 1.3, 1] } : {}}
+          transition={{ duration: 0.5 }}
+          className="text-xl sm:text-2xl"
+        >🎉</motion.span>
+
+        <span className="relative z-10 font-serif-elegant text-base sm:text-lg italic tracking-wider text-ivory drop-shadow-sm">
+          {bursting ? "Celebrating…" : "Accept Invitation"}
+        </span>
+
+        <motion.span
+          animate={hovered ? { rotate: [0, 20, -20, 0], scale: [1, 1.3, 1] } : {}}
+          transition={{ duration: 0.5 }}
+          className="text-xl sm:text-2xl"
+        >🎉</motion.span>
+      </div>
+    </motion.button>
+  );
+}
+
+/* ─────────────────────────────────────────
+   THANK YOU SCREEN
+───────────────────────────────────────── */
+function ThankYouScreen() {
+  const petals = ["🌸","🌺","🌹","✨","💛","💮","🌼","💫"];
+
+  return (
+    <motion.div
+      key="thankyou"
+      initial={{ opacity: 0, scale: 0.8, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
+      className="flex flex-col items-center gap-6 py-4 w-full"
+    >
+      {/* Glowing checkmark */}
+      <div className="relative">
+        <motion.div
+          className="absolute -inset-4 rounded-full"
+          style={{ background: "radial-gradient(circle, rgba(212,175,55,0.3) 0%, transparent 70%)" }}
+          animate={{ scale: [1, 1.3, 1], opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="relative flex h-20 w-20 items-center justify-center rounded-full"
+          style={{
+            background: "linear-gradient(135deg, rgba(212,175,55,0.3) 0%, rgba(255,216,107,0.2) 100%)",
+            border: "2px solid rgba(212,175,55,0.7)",
+            boxShadow: "0 0 30px rgba(212,175,55,0.4), inset 0 0 20px rgba(212,175,55,0.1)",
+          }}
+          initial={{ rotate: -10, scale: 0 }}
+          animate={{ rotate: 0, scale: 1 }}
+          transition={{ delay: 0.2, type: "spring", bounce: 0.5 }}
+        >
+          <motion.div
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            className="text-4xl"
+          >✓</motion.div>
+        </motion.div>
+
+        {/* Orbiting petals */}
+        {petals.map((p, i) => (
+          <motion.span
+            key={i}
+            className="absolute text-lg select-none"
+            style={{
+              top: "50%", left: "50%",
+              transformOrigin: "0 0",
+            }}
+            animate={{
+              rotate: [i * 45, i * 45 + 360],
+              x: Math.cos((i * Math.PI * 2) / 8) * 48 - 8,
+              y: Math.sin((i * Math.PI * 2) / 8) * 48 - 8,
+            }}
+            transition={{
+              rotate: { duration: 8, repeat: Infinity, ease: "linear" },
+              x: { duration: 0 },
+              y: { duration: 0 },
+            }}
+          >
+            {p}
+          </motion.span>
+        ))}
+      </div>
+
+      {/* Thank you text */}
+      <div className="text-center space-y-3">
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="font-serif-elegant text-xs sm:text-sm uppercase tracking-[0.4em] text-gold-deep"
+        >
+          With All Our Love
+        </motion.p>
+
+        <motion.h3
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, type: "spring", bounce: 0.3 }}
+          className="font-display text-2xl sm:text-3xl md:text-4xl text-gradient-royal leading-tight"
+        >
+          Thank You,
+        </motion.h3>
+
+        <motion.p
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.65, type: "spring", bounce: 0.5 }}
+          className="font-script text-4xl sm:text-5xl text-vermilion drop-shadow-sm"
+        >
+          {guestName}!
+        </motion.p>
+
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ delay: 0.8, duration: 0.6 }}
+          className="mx-auto gold-divider w-24"
+        />
+
+        <motion.p
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9 }}
+          className="font-serif-elegant text-sm sm:text-base italic leading-relaxed text-maroon/70 max-w-xs mx-auto"
+        >
+          Your presence will make our celebration truly divine. We are overjoyed you will be with us!
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.1 }}
+          className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-6 py-2.5 backdrop-blur-sm"
+        >
+          <span className="text-sm">🗓️</span>
+          <span className="font-serif-elegant text-xs sm:text-sm text-gold-deep">
+            {couple.weddingDate} · {couple.destination}
+          </span>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   ANIMATION VARIANTS
+───────────────────────────────────────── */
+const stagger = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.12 } } };
+const fadeUp  = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const } } };
+
+/* ─────────────────────────────────────────
+   MAIN COMPONENT
+───────────────────────────────────────── */
 export function GuestAction() {
   const [accepted, setAccepted] = useState(false);
   const [bursting, setBursting] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const rotateX = useTransform(mouseY, [-0.5, 0.5], ["8deg", "-8deg"]);
+  const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-8deg", "8deg"]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    mouseX.set((e.clientX - rect.left) / rect.width - 0.5);
+    mouseY.set((e.clientY - rect.top) / rect.height - 0.5);
+  };
+  const handleMouseLeave = () => { mouseX.set(0); mouseY.set(0); };
 
   const handleAccept = () => {
     setBursting(true);
-    setTimeout(() => { setAccepted(true); setBursting(false); }, 3200);
+    setTimeout(() => { setAccepted(true); setBursting(false); }, 3800);
   };
 
   return (
     <section
       id="rsvp"
-      className="relative overflow-hidden px-4 pt-12 pb-3 sm:pt-16"
+      className="relative px-4 pt-12 pb-8 sm:pt-20 sm:pb-12"
+      style={{
+        background: "radial-gradient(ellipse 120% 80% at 50% 0%, #FAF6EE 0%, #F6EDE2 45%, #ECDDBE 80%, #E8D5B0 100%)",
+      }}
     >
       {bursting && <FireworksOverlay onDone={() => setBursting(false)} />}
+      <RoyalBackground idPrefix="ga" />
 
-      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-20 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-gold/15 blur-3xl" />
-        <div className="absolute bottom-0 left-0 h-64 w-64 rounded-full bg-vermilion/10 blur-3xl" />
-        <div className="absolute bottom-0 right-0 h-64 w-64 rounded-full bg-kesar/10 blur-3xl" />
-      </div>
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-gold-deep to-transparent" />
+      <div className="relative mx-auto max-w-5xl z-10">
 
-      <div className="relative mx-auto max-w-5xl">
         {/* ── Header ── */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.8 }}
-          className="text-center mb-12"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, type: "spring", bounce: 0.3 }}
+          className="text-center mb-14 sm:mb-20"
         >
-          <p className="font-serif-elegant text-xs sm:text-sm uppercase tracking-[0.4em] text-gold-deep animate-text-glow">
-            Confirm Your Presence
-          </p>
-          <h2 className="mt-3 font-display text-4xl sm:text-5xl md:text-6xl text-gradient-royal drop-shadow-sm leading-tight">
+          <div className="inline-flex items-center gap-3 mb-4">
+            <span className="h-px w-10 sm:w-16 bg-gradient-to-r from-transparent to-gold" />
+            <p className="font-serif-elegant text-xs sm:text-sm uppercase tracking-[0.45em] text-gold-deep">
+              Confirm Your Presence
+            </p>
+            <span className="h-px w-10 sm:w-16 bg-gradient-to-l from-transparent to-gold" />
+          </div>
+          <h2 className="font-display text-5xl sm:text-6xl md:text-7xl text-gradient-royal drop-shadow-md leading-none">
             RSVP
           </h2>
-          <div className="mx-auto mt-5 gold-divider w-24 sm:w-32" />
+          <p className="mt-3 font-serif-elegant text-base sm:text-lg italic text-maroon/60">
+            आप सादर आमंत्रित हैं
+          </p>
         </motion.div>
 
-        {/* ── RSVP Card ── */}
+        {/* ── RSVP Main Card ── */}
         <motion.div
-          initial={{opacity:0,y:40}} whileInView={{opacity:1,y:0}} viewport={{once:true}}
-          transition={{duration:0.9,ease:[0.22,1,0.36,1]}}
-          className="mx-auto max-w-sm sm:max-w-md"
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+          className="mx-auto max-w-md sm:max-w-lg"
+          style={{ perspective: "1200px" }}
         >
-          <div className="group relative overflow-hidden rounded-3xl border border-gold/40 bg-gradient-to-b from-card to-ivory p-[1.5px] shadow-royal royal-card-tilt">
-            <div aria-hidden className="absolute inset-0 royal-shimmer-frame rounded-3xl" />
-            <div className="royal-hover-sweep" aria-hidden />
-            <div className="relative rounded-[22px] bg-gradient-ivory px-8 py-10 sm:px-12 sm:py-14 text-center">
-              <div aria-hidden className="pointer-events-none absolute inset-3 rounded-2xl border border-gold/25" />
-              <div aria-hidden className="pointer-events-none absolute inset-5 rounded-2xl border border-dashed border-gold/15" />
-              <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-                <div className="absolute -top-10 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full bg-gold/10 blur-3xl" />
-              </div>
-              <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.06]">
-                <svg viewBox="0 0 200 200" className="absolute left-1/2 top-1/2 h-full w-full -translate-x-1/2 -translate-y-1/2 animate-spin-slow text-gold-deep" fill="none" stroke="currentColor" strokeWidth="0.5">
-                  {[30,50,70,90].map(r => <circle key={r} cx="100" cy="100" r={r} />)}
-                  {Array.from({length:12}).map((_,i) => <line key={i} x1="100" y1="10" x2="100" y2="190" transform={`rotate(${i*30} 100 100)`} strokeOpacity="0.7" />)}
+          <motion.div
+            ref={cardRef}
+            style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            className="relative"
+          >
+            {/* Outer glowing border */}
+            <div
+              className="absolute -inset-[2px] rounded-[2.5rem] opacity-70"
+              style={{
+                background: "linear-gradient(135deg, rgba(212,175,55,0.8) 0%, rgba(255,216,107,0.4) 30%, rgba(200,150,50,0.6) 60%, rgba(212,175,55,0.9) 100%)",
+                filter: "blur(1px)",
+              }}
+            />
+
+            {/* Card body */}
+            <div
+              className="relative rounded-[2.5rem] overflow-hidden"
+              style={{
+                background: "linear-gradient(145deg, rgba(255,250,240,0.97) 0%, rgba(250,245,230,0.93) 50%, rgba(245,235,210,0.97) 100%)",
+                backdropFilter: "blur(20px)",
+                boxShadow: "0 25px 60px rgba(107,33,33,0.2), 0 10px 30px rgba(212,175,55,0.15), inset 0 1px 0 rgba(255,255,255,0.9)",
+              }}
+            >
+              {/* Rotating mandala bg */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden opacity-[0.05]">
+                <svg viewBox="0 0 300 300" className="w-full h-full text-gold-deep animate-spin-slow" fill="none" stroke="currentColor" strokeWidth="0.5">
+                  {[40, 65, 90, 115, 140].map(r => <circle key={r} cx="150" cy="150" r={r} />)}
+                  {Array.from({ length: 16 }).map((_, i) => (
+                    <line key={i} x1="150" y1="10" x2="150" y2="290" transform={`rotate(${i * 22.5} 150 150)`} />
+                  ))}
                 </svg>
               </div>
 
-              <div className="relative z-10 flex flex-col items-center">
-                <motion.div initial={{scale:0,rotate:-10}} whileInView={{scale:1,rotate:0}} viewport={{once:true}} transition={{duration:0.6,type:"spring",bounce:0.5}}
-                  className="flex h-16 w-16 items-center justify-center rounded-full border border-gold/50 bg-gradient-to-br from-maroon to-vermilion shadow-gold">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-7 w-7 text-ivory">
-                    <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </motion.div>
+              {/* Top golden arch accent */}
+              <div className="absolute top-0 left-0 right-0 h-1.5 rounded-t-[2.5rem]"
+                style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.8) 30%, rgba(255,216,107,1) 50%, rgba(212,175,55,0.8) 70%, transparent)" }}
+              />
 
-                <motion.p initial={{opacity:0,y:12}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{delay:0.15}}
-                  className="mt-6 font-display text-[10px] sm:text-xs uppercase tracking-[0.45em] text-gold-deep animate-text-glow">
-                  With Great Joy
-                </motion.p>
-                <motion.h3 initial={{opacity:0,y:16}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{delay:0.25}}
-                  className="mt-3 font-serif-elegant text-4xl sm:text-5xl font-light leading-tight text-gradient-royal drop-shadow-sm">
-                  You Are Invited
-                </motion.h3>
-                <motion.p initial={{opacity:0,y:10}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{delay:0.35}}
-                  className="mt-2 font-serif-elegant text-base sm:text-lg italic text-gold-deep/70">
-                  आप सादर आमंत्रित हैं
-                </motion.p>
+              {/* Corner ornaments */}
+              {["top-4 left-4", "top-4 right-4", "bottom-4 left-4", "bottom-4 right-4"].map((pos, i) => (
+                <div key={i} className={`absolute ${pos} text-gold/40 text-lg select-none pointer-events-none`}>❋</div>
+              ))}
 
-                <motion.div initial={{opacity:0,scaleX:0}} whileInView={{opacity:1,scaleX:1}} viewport={{once:true}} transition={{duration:0.7,delay:0.4}}
-                  className="mt-5 flex w-full items-center gap-3">
-                  <span className="h-px flex-1 bg-gradient-to-r from-transparent to-gold/50" />
-                  <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4 flex-shrink-0 text-vermilion/70">
-                    <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
-                  </svg>
-                  <span className="h-px flex-1 bg-gradient-to-l from-transparent to-gold/50" />
-                </motion.div>
-
-                <motion.p initial={{opacity:0,y:12}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{delay:0.5}}
-                  className="mt-5 font-script text-4xl sm:text-5xl text-vermilion drop-shadow-sm">
-                  {couple.brideFirst} &amp; {couple.groomFirst}
-                </motion.p>
-                <motion.div initial={{opacity:0,y:10}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{delay:0.6}}
-                  className="mt-4 inline-flex items-center rounded-full border border-gold/40 bg-gold/5 px-5 py-2">
-                  <span className="font-serif-elegant text-xs sm:text-sm text-gold-deep">
-                    {couple.weddingDate} · {couple.destination}
-                  </span>
-                </motion.div>
-                <motion.p initial={{opacity:0,y:10}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{delay:0.7}}
-                  className="mt-6 font-serif-elegant text-xs sm:text-sm italic leading-relaxed text-maroon/50">
-                  "We request the honor of your presence at the celebration of our union.
-                  Your blessings and love would make our special day truly memorable."
-                </motion.p>
-
-                <AnimatePresence mode="wait">
-                  {!accepted ? (
-                    <motion.div key="invite" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-12}} transition={{delay:0.8}} className="mt-8 w-full">
-                      <button
-                        onClick={handleAccept}
-                        disabled={bursting}
-                        className="group/btn relative w-full overflow-hidden rounded-full border border-gold/60 bg-gradient-to-r from-maroon via-vermilion to-maroon px-6 py-3.5 font-serif-elegant text-sm sm:text-base italic text-ivory shadow-royal transition-all duration-500 hover:scale-105 hover:shadow-[0_8px_30px_rgba(107,33,33,0.4)] hover:border-gold disabled:opacity-60"
+              {/* The entire inner content switches between invitation & thank-you */}
+              <AnimatePresence mode="wait">
+                {!accepted ? (
+                  <motion.div
+                    key="invitation-content"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0, scale: 0.95, filter: "blur(6px)" }}
+                    transition={{ duration: 0.5 }}
+                    className="relative px-8 py-10 sm:px-12 sm:py-14 text-center"
+                  >
+                    {/* Envelope icon */}
+                    <motion.div
+                      initial={{ scale: 0, rotate: -15 }}
+                      whileInView={{ scale: 1, rotate: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.7, type: "spring", bounce: 0.55 }}
+                      className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full"
+                      style={{
+                        background: "linear-gradient(135deg, #7B2D2D 0%, #C0392B 100%)",
+                        boxShadow: "0 8px 32px rgba(107,33,33,0.4), 0 0 0 6px rgba(212,175,55,0.15), 0 0 0 12px rgba(212,175,55,0.08)",
+                      }}
+                    >
+                      <motion.div
+                        animate={{ y: [0, -4, 0] }}
+                        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                       >
-                        <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-gold/30 to-transparent transition-transform duration-700 group-hover/btn:translate-x-full" />
-                        <span className="relative flex items-center justify-center gap-3">
-                          <span>🎉</span>
-                          <span>{bursting ? "Celebrating…" : "Accept Invitation"}</span>
-                          <span>🎉</span>
-                        </span>
-                      </button>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-9 w-9 text-ivory">
+                          <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                      </motion.div>
                     </motion.div>
-                  ) : (
-                    <motion.div key="accepted" initial={{opacity:0,scale:0.85}} animate={{opacity:1,scale:1}} transition={{duration:0.6,type:"spring",bounce:0.4}} className="mt-8 flex flex-col items-center gap-3">
-                      <div className="relative flex h-16 w-16 items-center justify-center rounded-full border-2 border-gold/60 bg-gradient-to-br from-gold/20 to-kesar/20 shadow-gold">
-                        <div className="absolute inset-0 animate-ping rounded-full border border-gold/30 opacity-60" />
-                        <CheckCircle2 className="h-8 w-8 text-gold-deep" strokeWidth={1.5} />
-                      </div>
-                      <p className="font-display text-xl text-maroon sm:text-2xl">Your Blessings Are Received</p>
-                      <p className="font-serif-elegant text-xs italic text-muted-foreground">We look forward to celebrating with you.</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+
+                    {/* Dear Guest Name */}
+                    <p className="font-serif-elegant text-xs sm:text-sm uppercase tracking-[0.35em] text-gold-deep">Dear</p>
+                    <p className="mt-1 font-script text-3xl sm:text-4xl text-maroon drop-shadow-sm">{guestName}</p>
+
+                    {/* Divider */}
+                    <div className="my-5 flex items-center gap-3">
+                      <span className="h-px flex-1 bg-gradient-to-r from-transparent to-gold/50" />
+                      <span className="text-vermilion text-base">♥</span>
+                      <span className="h-px flex-1 bg-gradient-to-l from-transparent to-gold/50" />
+                    </div>
+
+                    <p className="font-display text-[10px] sm:text-xs uppercase tracking-[0.45em] text-gold-deep">With Great Joy</p>
+                    <h3 className="mt-2 font-serif-elegant text-3xl sm:text-4xl font-light leading-tight text-gradient-royal drop-shadow-sm">
+                      You Are Invited
+                    </h3>
+
+                    <p className="mt-4 font-script text-4xl sm:text-5xl text-vermilion drop-shadow-sm">
+                      {couple.brideFirst} &amp; {couple.groomFirst}
+                    </p>
+
+                    <div
+                      className="mt-5 inline-flex items-center gap-2 rounded-full border border-gold/40 px-5 py-2.5 backdrop-blur-sm"
+                      style={{ background: "rgba(212,175,55,0.08)" }}
+                    >
+                      <span className="text-sm">🗓️</span>
+                      <span className="font-serif-elegant text-xs sm:text-sm text-gold-deep">
+                        {couple.weddingDate} · {couple.destination}
+                      </span>
+                    </div>
+
+                    <p className="mt-5 font-serif-elegant text-xs sm:text-sm italic leading-relaxed text-maroon/55">
+                      "We request the honour of your presence at the celebration of our union. Your blessings and love would make our special day truly divine."
+                    </p>
+
+                    <div className="mt-8 w-full">
+                      <AcceptButton onAccept={handleAccept} bursting={bursting} />
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="thankyou-content"
+                    initial={{ opacity: 0, scale: 1.04, filter: "blur(6px)" }}
+                    animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                    transition={{ duration: 0.7, type: "spring", bounce: 0.3 }}
+                    className="relative px-8 py-10 sm:px-12 sm:py-14"
+                  >
+                    <ThankYouScreen />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          </div>
+          </motion.div>
         </motion.div>
 
-        <motion.div initial={{opacity:0,scale:0.9}} whileInView={{opacity:1,scale:1}} viewport={{once:true}} transition={{duration:0.8}} className="mt-16 sm:mt-20">
+        {/* ── Ornate Divider ── */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="mt-20 sm:mt-24"
+        >
           <OrnateDivider />
         </motion.div>
 
         {/* ── Contact Cards ── */}
-        <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{once:true}} className="mt-12">
-          <motion.div variants={fadeUp} className="text-center mb-10">
-            <p className="font-serif-elegant text-xs sm:text-sm uppercase tracking-[0.4em] text-gold-deep animate-text-glow">Reach Us</p>
-            <h3 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl text-gradient-royal leading-tight drop-shadow-sm">Family Contacts</h3>
-            <div className="mx-auto mt-4 gold-divider w-20" />
+        <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }} className="mt-16">
+          <motion.div variants={fadeUp} className="text-center mb-12">
+            <div className="inline-flex items-center gap-3 mb-3">
+              <span className="h-px w-8 sm:w-12 bg-gradient-to-r from-transparent to-gold" />
+              <p className="font-serif-elegant text-xs sm:text-sm uppercase tracking-[0.4em] text-gold-deep">Reach Us</p>
+              <span className="h-px w-8 sm:w-12 bg-gradient-to-l from-transparent to-gold" />
+            </div>
+            <h3 className="font-display text-3xl sm:text-4xl md:text-5xl text-gradient-royal leading-tight drop-shadow-sm">
+              Family Contacts
+            </h3>
           </motion.div>
 
-          <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 md:grid-cols-3">
-            {contacts.map((c, idx) => (
+          <div className="grid gap-6 sm:gap-8 md:grid-cols-2 max-w-3xl mx-auto">
+            {[
+              { ...familySides[0].members[0], sideLabel: "Bride's Father", phone: "+919876543210", whatsapp: "919876543210" },
+              { ...familySides[1].members[0], sideLabel: "Groom's Father", phone: "+919812345678", whatsapp: "919812345678" }
+            ].map((c) => (
               <motion.div key={c.name} variants={fadeUp}
-                className="group relative overflow-hidden rounded-2xl border border-gold/30 bg-gradient-to-b from-card to-ivory shadow-card transition-all duration-500 hover:shadow-royal royal-card-tilt">
+                whileHover={{ y: -8, scale: 1.03 }}
+                className="group relative overflow-hidden rounded-[2rem] border border-gold/40 bg-gradient-to-br from-ivory/95 to-ivory/80 backdrop-blur-sm shadow-[0_8px_32px_rgba(200,169,81,0.15)] transition-all duration-500 hover:shadow-[0_20px_50px_rgba(212,175,55,0.3)] hover:border-gold/70"
+              >
+                {/* Grand Lotus Floral Background */}
+                <div className="absolute inset-x-0 bottom-0 pointer-events-none flex items-end justify-center opacity-[0.15] group-hover:opacity-[0.25] transition-opacity duration-700 overflow-hidden">
+                  <svg viewBox="0 0 200 150" className="w-[130%] sm:w-[110%] h-auto text-gold-deep translate-y-16 sm:translate-y-12 transition-transform duration-700 group-hover:-translate-y-4" fill="currentColor">
+                    {/* Central petal */}
+                    <path d="M100 10 C 115 50, 130 100, 100 150 C 70 100, 85 50, 100 10 Z" />
+                    {/* Side petals 1 */}
+                    <path d="M100 150 C 120 100, 160 60, 150 20 C 140 60, 115 100, 100 150 Z" opacity="0.8"/>
+                    <path d="M100 150 C 80 100, 40 60, 50 20 C 60 60, 85 100, 100 150 Z" opacity="0.8"/>
+                    {/* Side petals 2 */}
+                    <path d="M100 150 C 140 110, 190 80, 190 40 C 170 80, 130 120, 100 150 Z" opacity="0.5"/>
+                    <path d="M100 150 C 60 110, 10 80, 10 40 C 30 80, 70 120, 100 150 Z" opacity="0.5"/>
+                    {/* Outer petals 3 */}
+                    <path d="M100 150 C 150 130, 210 110, 210 80 C 180 110, 140 140, 100 150 Z" opacity="0.3"/>
+                    <path d="M100 150 C 50 130, -10 110, -10 80 C 20 110, 60 140, 100 150 Z" opacity="0.3"/>
+                  </svg>
+                </div>
+
+                {/* Floating Floral Petals */}
+                <div className="absolute inset-0 pointer-events-none opacity-[0.18] group-hover:opacity-[0.28] transition-opacity duration-700">
+                  <svg viewBox="0 0 100 100" className="absolute top-12 left-10 w-8 h-8 text-gold-deep animate-pulse-slow" fill="currentColor">
+                    <path d="M50 0 C60 20 80 40 100 50 C80 60 60 80 50 100 C40 80 20 60 0 50 C20 40 40 20 50 0Z" transform="rotate(15 50 50)"/>
+                  </svg>
+                  <svg viewBox="0 0 100 100" className="absolute top-32 right-10 w-6 h-6 text-gold-deep animate-pulse-slow" style={{ animationDelay: "1s" }} fill="currentColor">
+                    <path d="M50 0 C60 20 80 40 100 50 C80 60 60 80 50 100 C40 80 20 60 0 50 C20 40 40 20 50 0Z" transform="rotate(-25 50 50)"/>
+                  </svg>
+                  <svg viewBox="0 0 100 100" className="absolute bottom-32 left-8 w-10 h-10 text-gold-deep animate-pulse-slow" style={{ animationDelay: "2s" }} fill="currentColor">
+                    <path d="M50 0 C60 20 80 40 100 50 C80 60 60 80 50 100 C40 80 20 60 0 50 C20 40 40 20 50 0Z" transform="rotate(45 50 50)"/>
+                  </svg>
+                  <svg viewBox="0 0 100 100" className="absolute bottom-16 right-16 w-5 h-5 text-gold-deep animate-pulse-slow" style={{ animationDelay: "0.5s" }} fill="currentColor">
+                    <path d="M50 0 C60 20 80 40 100 50 C80 60 60 80 50 100 C40 80 20 60 0 50 C20 40 40 20 50 0Z" transform="rotate(-15 50 50)"/>
+                  </svg>
+                </div>
+
+                <div className="absolute top-0 left-0 right-0 h-1 rounded-t-[2rem]"
+                  style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.6) 50%, transparent)" }}
+                />
                 <div className="royal-hover-sweep" aria-hidden />
-                <div aria-hidden className="pointer-events-none absolute inset-2.5 rounded-xl border border-dashed border-gold/20 transition-colors duration-500 group-hover:border-gold/40" />
-                <div className="relative px-5 py-7 sm:px-6 sm:py-8 text-center flex flex-col items-center">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-gold/40 bg-gradient-to-br from-gold/15 to-kesar/15 shadow-[0_0_12px_rgba(212,175,55,0.2)] transition-all duration-500 group-hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] group-hover:border-gold/70">
-                    <span className="font-display text-sm text-gold-deep">{String(idx+1).padStart(2,"0")}</span>
+                
+                <div className="relative px-6 py-10 text-center flex flex-col items-center">
+                  {/* Image with glowing animated frame */}
+                  <div className="relative mb-6">
+                    <div className="absolute -inset-4 rounded-full border border-dashed border-gold/40 animate-spin-slow opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-gold/40 to-kesar/40 blur-md opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+                    <img 
+                      src={c.image} 
+                      alt={c.name} 
+                      className="relative h-32 w-32 rounded-full object-cover border-4 border-gold/60 shadow-[0_0_20px_rgba(212,175,55,0.3)] transition-transform duration-500 group-hover:scale-105" 
+                    />
                   </div>
-                  <p className="font-display text-[10px] sm:text-xs uppercase tracking-[0.3em] text-gold-deep">{c.side}</p>
-                  <p className="mt-2 font-serif-elegant text-base sm:text-lg text-maroon leading-snug">{c.name}</p>
-                  <div className="mx-auto mt-3 h-px w-12 bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
-                  <div className="mt-5 flex justify-center gap-2 sm:gap-3">
-                    <a href={`tel:${c.phone}`} className="inline-flex items-center gap-1.5 rounded-full border border-maroon/30 px-4 py-2 font-display text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-maroon transition-all duration-300 hover:bg-maroon hover:text-ivory hover:border-maroon">
-                      <Phone className="h-3 w-3" /> Call
+                  
+                  <p className="font-display text-[10px] sm:text-xs uppercase tracking-[0.3em] text-gold-deep">{c.sideLabel}</p>
+                  <p className="mt-2 font-serif-elegant text-xl sm:text-2xl text-maroon leading-snug">{c.name}</p>
+                  <div className="mx-auto mt-4 h-px w-16 bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+                  
+                  <div className="mt-6 flex justify-center gap-3 sm:gap-4 w-full">
+                    <a href={`tel:${c.phone}`}
+                      className="flex-1 inline-flex justify-center items-center gap-2 rounded-full border border-maroon/30 bg-white/50 px-4 py-2.5 font-display text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-maroon transition-all duration-300 hover:bg-maroon hover:text-ivory hover:border-maroon hover:shadow-[0_8px_20px_rgba(107,33,33,0.2)]">
+                      <Phone className="h-3.5 w-3.5" /> Call
                     </a>
                     <a href={`https://wa.me/${c.whatsapp}`} target="_blank" rel="noopener noreferrer"
-                      className="group/btn relative inline-flex items-center gap-1.5 overflow-hidden rounded-full bg-gradient-to-r from-maroon to-vermilion px-4 py-2 font-display text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-ivory shadow-card transition-all duration-300 hover:scale-105 hover:shadow-royal">
+                      className="group/btn relative flex-1 inline-flex justify-center items-center gap-2 overflow-hidden rounded-full bg-gradient-to-r from-maroon to-vermilion px-4 py-2.5 font-display text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-ivory shadow-md transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_25px_rgba(107,33,33,0.4)]">
                       <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-gold/30 to-transparent transition-transform duration-700 group-hover/btn:translate-x-full" />
-                      <MessageCircle className="relative h-3 w-3" />
+                      <MessageCircle className="relative h-3.5 w-3.5" />
                       <span className="relative">WhatsApp</span>
                     </a>
                   </div>
@@ -262,56 +644,21 @@ export function GuestAction() {
           </div>
         </motion.div>
 
-        <motion.div initial={{opacity:0,scale:0.9}} whileInView={{opacity:1,scale:1}} viewport={{once:true}} transition={{duration:0.8}} className="mt-16 sm:mt-20">
-          <OrnateDivider />
-        </motion.div>
-
-        {/* ── Travel & Stay ── */}
-        <motion.div initial={{opacity:0,y:40}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{duration:0.9}} className="mt-12 mx-auto max-w-3xl">
-          <div className="group relative overflow-hidden rounded-2xl border border-gold/40 bg-gradient-to-b from-card to-ivory p-[1.5px] shadow-royal royal-card-tilt">
-            <div aria-hidden className="absolute inset-0 royal-shimmer-frame rounded-2xl" />
-            <div className="royal-hover-sweep" aria-hidden />
-            <div className="relative rounded-2xl bg-gradient-ivory px-6 py-10 sm:px-10 sm:py-12">
-              <div aria-hidden className="pointer-events-none absolute inset-3 rounded-xl border border-gold/20" />
-              <div className="text-center mb-8">
-                <p className="font-serif-elegant text-xs sm:text-sm uppercase tracking-[0.4em] text-gold-deep animate-text-glow">Stay &amp; Travel</p>
-                <h3 className="mt-3 font-display text-2xl sm:text-3xl md:text-4xl text-gradient-royal leading-tight drop-shadow-sm">A Note for Outstation Guests</h3>
-                <div className="mx-auto mt-4 gold-divider w-20" />
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="flex gap-4 rounded-xl border border-gold/20 bg-gold/5 p-4 sm:p-5 transition-colors hover:bg-gold/10 hover:border-gold/40">
-                  <div className="flex-shrink-0 flex h-10 w-10 items-center justify-center rounded-full border border-gold/40 bg-gradient-to-br from-gold/20 to-kesar/20">
-                    <Plane className="h-4 w-4 text-gold-deep" />
-                  </div>
-                  <div>
-                    <p className="font-display text-[10px] uppercase tracking-[0.25em] text-gold-deep">Airport</p>
-                    <p className="mt-1 font-serif-elegant text-sm text-maroon/85 leading-snug">{travel.airport}</p>
-                  </div>
-                </div>
-                <div className="flex gap-4 rounded-xl border border-gold/20 bg-gold/5 p-4 sm:p-5 transition-colors hover:bg-gold/10 hover:border-gold/40">
-                  <div className="flex-shrink-0 flex h-10 w-10 items-center justify-center rounded-full border border-gold/40 bg-gradient-to-br from-gold/20 to-kesar/20">
-                    <Hotel className="h-4 w-4 text-gold-deep" />
-                  </div>
-                  <div>
-                    <p className="font-display text-[10px] uppercase tracking-[0.25em] text-gold-deep">Stay</p>
-                    <p className="mt-1 font-serif-elegant text-sm text-maroon/85 leading-snug">{travel.stay}</p>
-                  </div>
-                </div>
-              </div>
-              <p className="mt-5 text-center font-serif-elegant text-sm italic text-muted-foreground">{travel.note}</p>
-            </div>
-          </div>
-        </motion.div>
-
         {/* ── Footer ── */}
-        <motion.footer initial={{opacity:0}} whileInView={{opacity:1}} viewport={{once:true}} transition={{duration:1}} className="mt-20 text-center">
+        <motion.footer
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1 }}
+          className="mt-20 text-center pb-6"
+        >
           <div className="mx-auto gold-divider w-32" />
-          <p className="mt-6 font-script text-4xl text-vermilion drop-shadow-sm">{couple.brideFirst} &amp; {couple.groomFirst}</p>
+          <p className="mt-6 font-script text-4xl sm:text-5xl text-vermilion drop-shadow-sm">{couple.brideFirst} &amp; {couple.groomFirst}</p>
           <p className="mt-2 font-serif-elegant text-sm italic text-muted-foreground">{couple.weddingDate} · {couple.destination}</p>
-          <div className="mt-6 flex justify-center gap-2">
-            <span className="h-px w-8 bg-gradient-to-r from-transparent to-gold/50" />
-            <span className="h-1.5 w-1.5 rounded-full bg-gold/70" />
-            <span className="h-px w-8 bg-gradient-to-l from-transparent to-gold/50" />
+          <div className="mt-6 flex justify-center items-center gap-3">
+            <span className="h-px w-12 bg-gradient-to-r from-transparent to-gold/50" />
+            <span className="text-gold/70">✦</span>
+            <span className="h-px w-12 bg-gradient-to-l from-transparent to-gold/50" />
           </div>
         </motion.footer>
 
