@@ -676,6 +676,12 @@ export function GuestAction() {
       }}
     >
       {bursting && <FireworksOverlay onDone={() => setBursting(false)} />}
+      <RsvpFormModal
+        open={formOpen}
+        initial={rsvpData}
+        onClose={() => setFormOpen(false)}
+        onSubmit={handleFormSubmit}
+      />
       <RoyalBackground idPrefix="ga" />
 
       <div className="relative mx-auto max-w-5xl z-10">
