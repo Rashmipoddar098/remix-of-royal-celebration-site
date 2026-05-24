@@ -634,6 +634,9 @@ const fadeUp  = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, tr
 export function GuestAction() {
   const [accepted, setAccepted] = useState(false);
   const [bursting, setBursting] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [rsvpData, setRsvpData] = useState<RsvpData>(DEFAULT_RSVP);
   const cardRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -650,7 +653,18 @@ export function GuestAction() {
 
   const handleAccept = () => {
     setBursting(true);
-    setTimeout(() => { setAccepted(true); setBursting(false); }, 3800);
+    setTimeout(() => {
+      setAccepted(true);
+      setBursting(false);
+      // Auto-open the RSVP form right after acceptance
+      setTimeout(() => setFormOpen(true), 900);
+    }, 3800);
+  };
+
+  const handleFormSubmit = (data: RsvpData) => {
+    setRsvpData(data);
+    setSubmitted(true);
+    setFormOpen(false);
   };
 
   return (
