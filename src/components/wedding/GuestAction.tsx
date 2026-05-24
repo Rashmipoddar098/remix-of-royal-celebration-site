@@ -2,8 +2,269 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { familySides, couple, guestName } from "@/data/wedding";
 import { OrnateDivider } from "./OrnateDivider";
-import { Phone, MessageCircle } from "lucide-react";
+import { Phone, MessageCircle, Users, Utensils, Sparkles, Pencil, Send, X } from "lucide-react";
 import { RoyalBackground } from "./RoyalBackground";
+
+/* ─────────────────────────────────────────
+   RSVP FORM TYPES & DEFAULTS
+───────────────────────────────────────── */
+type RsvpData = {
+  guestCount: number;
+  attending: "yes" | "no";
+  events: string[];
+  diet: "veg" | "non-veg" | "jain";
+  note: string;
+};
+
+const DEFAULT_RSVP: RsvpData = {
+  guestCount: 1,
+  attending: "yes",
+  events: ["Wedding"],
+  diet: "veg",
+  note: "",
+};
+
+const EVENT_OPTIONS = ["Haldi", "Mehndi", "Wedding", "Reception"];
+
+/* ─────────────────────────────────────────
+   RSVP FORM MODAL
+───────────────────────────────────────── */
+function RsvpFormModal({
+  open,
+  initial,
+  onClose,
+  onSubmit,
+}: {
+  open: boolean;
+  initial: RsvpData;
+  onClose: () => void;
+  onSubmit: (data: RsvpData) => void;
+}) {
+  const [data, setData] = useState<RsvpData>(initial);
+
+  useEffect(() => {
+    if (open) setData(initial);
+  }, [open, initial]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [open, onClose]);
+
+  const toggleEvent = (evt: string) => {
+    setData((d) => ({
+      ...d,
+      events: d.events.includes(evt) ? d.events.filter((e) => e !== evt) : [...d.events, evt],
+    }));
+  };
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-[400] flex items-center justify-center p-4 sm:p-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          {/* Backdrop */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-br from-maroon/70 via-black/60 to-maroon/70 backdrop-blur-md"
+            onClick={onClose}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          />
+
+          {/* Modal card */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.85, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ type: "spring", bounce: 0.35, duration: 0.55 }}
+            className="relative w-full max-w-lg max-h-[90vh] overflow-hidden rounded-[2rem]"
+            style={{
+              background: "linear-gradient(145deg, rgba(255,250,240,0.98) 0%, rgba(250,245,230,0.96) 50%, rgba(245,235,210,0.98) 100%)",
+              boxShadow: "0 25px 80px rgba(107,33,33,0.45), 0 0 0 1px rgba(212,175,55,0.5)",
+            }}
+          >
+            {/* Gold top arch */}
+            <div className="absolute top-0 left-0 right-0 h-1.5"
+              style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.9) 30%, rgba(255,216,107,1) 50%, rgba(212,175,55,0.9) 70%, transparent)" }}
+            />
+
+            {/* Corner ornaments */}
+            {["top-3 left-3", "top-3 right-3", "bottom-3 left-3", "bottom-3 right-3"].map((pos, i) => (
+              <div key={i} className={`absolute ${pos} text-gold/50 text-base select-none pointer-events-none`}>❋</div>
+            ))}
+
+            {/* Close button */}
+            <button
+              onClick={onClose}
+              aria-label="Close"
+              className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-gold/40 bg-ivory/80 text-maroon transition-all duration-300 hover:scale-110 hover:bg-maroon hover:text-ivory"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            <div className="max-h-[90vh] overflow-y-auto px-6 py-8 sm:px-10 sm:py-10">
+              {/* Header */}
+              <div className="text-center mb-6">
+                <div className="inline-flex items-center gap-2 mb-2">
+                  <span className="h-px w-8 bg-gradient-to-r from-transparent to-gold" />
+                  <p className="font-serif-elegant text-[10px] sm:text-xs uppercase tracking-[0.4em] text-gold-deep">RSVP Details</p>
+                  <span className="h-px w-8 bg-gradient-to-l from-transparent to-gold" />
+                </div>
+                <h3 className="font-display text-3xl sm:text-4xl text-gradient-royal leading-tight">
+                  Share Your Details
+                </h3>
+                <p className="mt-2 font-serif-elegant text-xs sm:text-sm italic text-maroon/60">
+                  Help us prepare for your warm presence
+                </p>
+              </div>
+
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  onSubmit(data);
+                }}
+                className="space-y-5"
+              >
+                {/* Attending */}
+                <div>
+                  <label className="font-serif-elegant text-xs uppercase tracking-[0.25em] text-gold-deep flex items-center gap-2 mb-2">
+                    <Sparkles className="h-3.5 w-3.5" /> Will you attend?
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {(["yes", "no"] as const).map((v) => (
+                      <button
+                        type="button"
+                        key={v}
+                        onClick={() => setData((d) => ({ ...d, attending: v }))}
+                        className={`rounded-xl border-2 px-4 py-2.5 font-serif-elegant text-sm capitalize transition-all duration-300 ${
+                          data.attending === v
+                            ? "border-gold bg-gradient-to-br from-maroon to-vermilion text-ivory shadow-[0_6px_20px_rgba(107,33,33,0.35)]"
+                            : "border-gold/30 bg-ivory/60 text-maroon hover:border-gold/60"
+                        }`}
+                      >
+                        {v === "yes" ? "Yes, with joy" : "Sorry, no"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Guest count */}
+                <div>
+                  <label className="font-serif-elegant text-xs uppercase tracking-[0.25em] text-gold-deep flex items-center gap-2 mb-2">
+                    <Users className="h-3.5 w-3.5" /> Number of guests
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setData((d) => ({ ...d, guestCount: Math.max(1, d.guestCount - 1) }))}
+                      className="h-10 w-10 rounded-full border-2 border-gold/40 bg-ivory text-maroon text-lg font-bold transition hover:bg-maroon hover:text-ivory"
+                    >−</button>
+                    <div className="flex-1 text-center font-display text-3xl text-gradient-royal py-2 rounded-xl border-2 border-gold/30 bg-ivory/60">
+                      {data.guestCount}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setData((d) => ({ ...d, guestCount: Math.min(20, d.guestCount + 1) }))}
+                      className="h-10 w-10 rounded-full border-2 border-gold/40 bg-ivory text-maroon text-lg font-bold transition hover:bg-maroon hover:text-ivory"
+                    >+</button>
+                  </div>
+                </div>
+
+                {/* Events */}
+                <div>
+                  <label className="font-serif-elegant text-xs uppercase tracking-[0.25em] text-gold-deep mb-2 block">
+                    Events you will join
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {EVENT_OPTIONS.map((evt) => {
+                      const active = data.events.includes(evt);
+                      return (
+                        <button
+                          type="button"
+                          key={evt}
+                          onClick={() => toggleEvent(evt)}
+                          className={`rounded-xl border-2 px-3 py-2 font-serif-elegant text-sm transition-all duration-300 ${
+                            active
+                              ? "border-gold bg-gradient-to-br from-gold/30 to-kesar/20 text-maroon shadow-[0_4px_15px_rgba(212,175,55,0.3)]"
+                              : "border-gold/30 bg-ivory/60 text-maroon/70 hover:border-gold/60"
+                          }`}
+                        >
+                          {active ? "✓ " : ""}{evt}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Diet */}
+                <div>
+                  <label className="font-serif-elegant text-xs uppercase tracking-[0.25em] text-gold-deep flex items-center gap-2 mb-2">
+                    <Utensils className="h-3.5 w-3.5" /> Meal preference
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(["veg", "non-veg", "jain"] as const).map((d) => (
+                      <button
+                        type="button"
+                        key={d}
+                        onClick={() => setData((s) => ({ ...s, diet: d }))}
+                        className={`rounded-xl border-2 px-2 py-2 font-serif-elegant text-xs sm:text-sm capitalize transition-all duration-300 ${
+                          data.diet === d
+                            ? "border-gold bg-gradient-to-br from-maroon to-vermilion text-ivory shadow-[0_4px_15px_rgba(107,33,33,0.3)]"
+                            : "border-gold/30 bg-ivory/60 text-maroon hover:border-gold/60"
+                        }`}
+                      >
+                        {d}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Note */}
+                <div>
+                  <label className="font-serif-elegant text-xs uppercase tracking-[0.25em] text-gold-deep mb-2 block">
+                    A message (optional)
+                  </label>
+                  <textarea
+                    value={data.note}
+                    onChange={(e) => setData((d) => ({ ...d, note: e.target.value }))}
+                    rows={3}
+                    placeholder="Your blessings or any special request…"
+                    className="w-full rounded-xl border-2 border-gold/30 bg-ivory/70 px-4 py-3 font-serif-elegant text-sm text-maroon placeholder:text-maroon/40 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30 resize-none"
+                  />
+                </div>
+
+                {/* Submit */}
+                <motion.button
+                  type="submit"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 font-serif-elegant text-base italic tracking-wider text-ivory shadow-[0_8px_24px_rgba(107,33,33,0.35)] transition-all"
+                  style={{ background: "linear-gradient(135deg, #6B2121 0%, #C0392B 50%, #D4AF37 100%)" }}
+                >
+                  <Send className="h-4 w-4" />
+                  Submit RSVP
+                </motion.button>
+              </form>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
 
 /* ─────────────────────────────────────────
    FIREWORKS ENGINE
