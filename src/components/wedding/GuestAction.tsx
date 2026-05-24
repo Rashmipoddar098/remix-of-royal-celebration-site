@@ -469,7 +469,7 @@ function AcceptButton({ onAccept, bursting }: { onAccept: () => void; bursting: 
 /* ─────────────────────────────────────────
    THANK YOU SCREEN
 ───────────────────────────────────────── */
-function ThankYouScreen() {
+function ThankYouScreen({ submitted, onOpenForm }: { submitted: boolean; onOpenForm: () => void }) {
   const petals = ["🌸","🌺","🌹","✨","💛","💮","🌼","💫"];
 
   return (
