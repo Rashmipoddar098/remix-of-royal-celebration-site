@@ -836,7 +836,7 @@ export function GuestAction() {
                     transition={{ duration: 0.7, type: "spring", bounce: 0.3 }}
                     className="relative px-8 py-10 sm:px-12 sm:py-14"
                   >
-                    <ThankYouScreen />
+                    <ThankYouScreen submitted={submitted} onOpenForm={() => setFormOpen(true)} />
                   </motion.div>
                 )}
               </AnimatePresence>
