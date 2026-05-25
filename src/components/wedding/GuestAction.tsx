@@ -886,7 +886,12 @@ export function GuestAction() {
                     transition={{ duration: 0.7, type: "spring", bounce: 0.3 }}
                     className="relative px-8 py-10 sm:px-12 sm:py-14"
                   >
-                    <ThankYouScreen submitted={submitted} onOpenForm={() => setFormOpen(true)} />
+                    <ThankYouScreen
+                      submitted={submitted}
+                      showCta={isDetailed}
+                      allowEdit={config.allowEditRsvp}
+                      onOpenForm={() => setFormOpen(true)}
+                    />
                   </motion.div>
                 )}
               </AnimatePresence>
