@@ -1,56 +1,189 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { familySides, couple, guestName } from "@/data/wedding";
 import { OrnateDivider } from "./OrnateDivider";
-import { Phone, MessageCircle, Users, Utensils, Sparkles, Pencil, Send, X } from "lucide-react";
+import { Phone, MessageCircle, Sparkles, Pencil, Send, X } from "lucide-react";
 import { RoyalBackground } from "./RoyalBackground";
+import { resolveRsvpConfig, type RsvpConfig, type RsvpField } from "@/data/rsvpConfig";
 
 /* ─────────────────────────────────────────
-   RSVP FORM TYPES & DEFAULTS
+   RSVP FORM DATA — fully driven by config.form.fields
 ───────────────────────────────────────── */
-type RsvpData = {
-  guestCount: number;
-  attending: "yes" | "no";
-  events: string[];
-  diet: "veg" | "non-veg" | "jain";
-  note: string;
-};
+type RsvpValues = Record<string, string | number | string[] | boolean>;
 
-const DEFAULT_RSVP: RsvpData = {
-  guestCount: 1,
-  attending: "yes",
-  events: ["Wedding"],
-  diet: "veg",
-  note: "",
-};
+function buildDefaults(fields: RsvpField[]): RsvpValues {
+  const out: RsvpValues = {};
+  for (const f of fields) {
+    switch (f.type) {
+      case "number": out[f.id] = f.min ?? 1; break;
+      case "multiselect": out[f.id] = []; break;
+      case "yesno": out[f.id] = false; break;
+      default: out[f.id] = "";
+    }
+  }
+  return out;
+}
 
-const EVENT_OPTIONS = ["Haldi", "Mehndi", "Wedding", "Reception"];
+function isFieldFilled(field: RsvpField, value: RsvpValues[string]): boolean {
+  if (field.type === "multiselect") return Array.isArray(value) && value.length > 0;
+  if (field.type === "yesno") return typeof value === "boolean";
+  if (field.type === "number") return typeof value === "number" && !Number.isNaN(value);
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+/* ─────────────────────────────────────────
+   DYNAMIC FIELD RENDERER
+───────────────────────────────────────── */
+function DynamicField({
+  field, value, onChange,
+}: {
+  field: RsvpField;
+  value: RsvpValues[string];
+  onChange: (v: RsvpValues[string]) => void;
+}) {
+  const labelEl = (
+    <label className="font-serif-elegant text-xs uppercase tracking-[0.25em] text-gold-deep mb-2 block">
+      {field.label}
+      {field.required && <span className="text-vermilion ml-1">*</span>}
+    </label>
+  );
+  const baseInput =
+    "w-full rounded-xl border-2 border-gold/30 bg-ivory/70 px-4 py-2.5 font-serif-elegant text-sm text-maroon placeholder:text-maroon/40 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30";
+
+  switch (field.type) {
+    case "number": {
+      const num = typeof value === "number" ? value : Number(value) || (field.min ?? 1);
+      const min = field.min ?? 1;
+      const max = field.max ?? 99;
+      return (
+        <div>
+          {labelEl}
+          <div className="flex items-center gap-3">
+            <button type="button" onClick={() => onChange(Math.max(min, num - 1))}
+              className="h-10 w-10 shrink-0 rounded-full border-2 border-gold/40 bg-ivory text-maroon text-lg font-bold transition hover:bg-maroon hover:text-ivory">−</button>
+            <div className="flex-1 text-center font-display text-3xl text-gradient-royal py-2 rounded-xl border-2 border-gold/30 bg-ivory/60">{num}</div>
+            <button type="button" onClick={() => onChange(Math.min(max, num + 1))}
+              className="h-10 w-10 shrink-0 rounded-full border-2 border-gold/40 bg-ivory text-maroon text-lg font-bold transition hover:bg-maroon hover:text-ivory">+</button>
+          </div>
+        </div>
+      );
+    }
+    case "select": {
+      const options = field.options ?? [];
+      return (
+        <div>
+          {labelEl}
+          <div className={`grid gap-2 ${options.length <= 3 ? "grid-cols-3" : "grid-cols-2"}`}>
+            {options.map((opt) => {
+              const active = value === opt;
+              return (
+                <button type="button" key={opt} onClick={() => onChange(opt)}
+                  className={`rounded-xl border-2 px-2 py-2 font-serif-elegant text-xs sm:text-sm transition-all duration-300 ${
+                    active
+                      ? "border-gold bg-gradient-to-br from-maroon to-vermilion text-ivory shadow-[0_4px_15px_rgba(107,33,33,0.3)]"
+                      : "border-gold/30 bg-ivory/60 text-maroon hover:border-gold/60"
+                  }`}>{opt}</button>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+    case "multiselect": {
+      const arr = Array.isArray(value) ? value : [];
+      const options = field.options ?? [];
+      return (
+        <div>
+          {labelEl}
+          <div className="grid grid-cols-2 gap-2">
+            {options.map((opt) => {
+              const active = arr.includes(opt);
+              return (
+                <button type="button" key={opt}
+                  onClick={() => onChange(active ? arr.filter((x) => x !== opt) : [...arr, opt])}
+                  className={`rounded-xl border-2 px-3 py-2 font-serif-elegant text-sm transition-all duration-300 ${
+                    active
+                      ? "border-gold bg-gradient-to-br from-gold/30 to-kesar/20 text-maroon shadow-[0_4px_15px_rgba(212,175,55,0.3)]"
+                      : "border-gold/30 bg-ivory/60 text-maroon/70 hover:border-gold/60"
+                  }`}>{active ? "✓ " : ""}{opt}</button>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+    case "yesno": {
+      const v = Boolean(value);
+      return (
+        <div>
+          {labelEl}
+          <div className="grid grid-cols-2 gap-3">
+            {[{ k: true, label: "Yes" }, { k: false, label: "No" }].map((o) => (
+              <button type="button" key={String(o.k)} onClick={() => onChange(o.k)}
+                className={`rounded-xl border-2 px-4 py-2.5 font-serif-elegant text-sm transition-all duration-300 ${
+                  v === o.k
+                    ? "border-gold bg-gradient-to-br from-maroon to-vermilion text-ivory shadow-[0_6px_20px_rgba(107,33,33,0.35)]"
+                    : "border-gold/30 bg-ivory/60 text-maroon hover:border-gold/60"
+                }`}>{o.label}</button>
+            ))}
+          </div>
+        </div>
+      );
+    }
+    case "longtext":
+      return (
+        <div>
+          {labelEl}
+          <textarea value={typeof value === "string" ? value : ""} onChange={(e) => onChange(e.target.value)}
+            rows={3} placeholder={field.placeholder} className={`${baseInput} resize-none`} />
+        </div>
+      );
+    case "time":
+    case "date":
+    case "text":
+    case "phone":
+    case "email":
+    default: {
+      const inputType =
+        field.type === "time" ? "time"
+        : field.type === "date" ? "date"
+        : field.type === "phone" ? "tel"
+        : field.type === "email" ? "email" : "text";
+      return (
+        <div>
+          {labelEl}
+          <input type={inputType} value={typeof value === "string" ? value : ""}
+            onChange={(e) => onChange(e.target.value)} placeholder={field.placeholder} className={baseInput} />
+          {field.hint && <p className="mt-1 font-serif-elegant text-[11px] italic text-maroon/50">{field.hint}</p>}
+        </div>
+      );
+    }
+  }
+}
 
 /* ─────────────────────────────────────────
    RSVP FORM MODAL
 ───────────────────────────────────────── */
 function RsvpFormModal({
-  open,
-  initial,
-  onClose,
-  onSubmit,
+  open, initial, fields, isEdit, onClose, onSubmit,
 }: {
   open: boolean;
-  initial: RsvpData;
+  initial: RsvpValues;
+  fields: RsvpField[];
+  isEdit: boolean;
   onClose: () => void;
-  onSubmit: (data: RsvpData) => void;
+  onSubmit: (data: RsvpValues) => void;
 }) {
-  const [data, setData] = useState<RsvpData>(initial);
+  const [data, setData] = useState<RsvpValues>(initial);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (open) setData(initial);
+    if (open) { setData(initial); setError(null); }
   }, [open, initial]);
 
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
     return () => {
@@ -59,11 +192,16 @@ function RsvpFormModal({
     };
   }, [open, onClose]);
 
-  const toggleEvent = (evt: string) => {
-    setData((d) => ({
-      ...d,
-      events: d.events.includes(evt) ? d.events.filter((e) => e !== evt) : [...d.events, evt],
-    }));
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    for (const f of fields) {
+      if (f.required && !isFieldFilled(f, data[f.id])) {
+        setError(`Please fill in: ${f.label}`);
+        return;
+      }
+    }
+    setError(null);
+    onSubmit(data);
   };
 
   return (
@@ -71,20 +209,13 @@ function RsvpFormModal({
       {open && (
         <motion.div
           className="fixed inset-0 z-[400] flex items-center justify-center p-4 sm:p-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         >
-          {/* Backdrop */}
           <motion.div
             className="absolute inset-0 bg-gradient-to-br from-maroon/70 via-black/60 to-maroon/70 backdrop-blur-md"
             onClick={onClose}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
           />
-
-          {/* Modal card */}
           <motion.div
             initial={{ opacity: 0, scale: 0.85, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -96,166 +227,50 @@ function RsvpFormModal({
               boxShadow: "0 25px 80px rgba(107,33,33,0.45), 0 0 0 1px rgba(212,175,55,0.5)",
             }}
           >
-            {/* Gold top arch */}
             <div className="absolute top-0 left-0 right-0 h-1.5"
-              style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.9) 30%, rgba(255,216,107,1) 50%, rgba(212,175,55,0.9) 70%, transparent)" }}
-            />
-
-            {/* Corner ornaments */}
+              style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.9) 30%, rgba(255,216,107,1) 50%, rgba(212,175,55,0.9) 70%, transparent)" }} />
             {["top-3 left-3", "top-3 right-3", "bottom-3 left-3", "bottom-3 right-3"].map((pos, i) => (
               <div key={i} className={`absolute ${pos} text-gold/50 text-base select-none pointer-events-none`}>❋</div>
             ))}
-
-            {/* Close button */}
-            <button
-              onClick={onClose}
-              aria-label="Close"
-              className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-gold/40 bg-ivory/80 text-maroon transition-all duration-300 hover:scale-110 hover:bg-maroon hover:text-ivory"
-            >
+            <button onClick={onClose} aria-label="Close"
+              className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-gold/40 bg-ivory/80 text-maroon transition-all duration-300 hover:scale-110 hover:bg-maroon hover:text-ivory">
               <X className="h-4 w-4" />
             </button>
 
             <div className="max-h-[90vh] overflow-y-auto px-6 py-8 sm:px-10 sm:py-10">
-              {/* Header */}
               <div className="text-center mb-6">
                 <div className="inline-flex items-center gap-2 mb-2">
                   <span className="h-px w-8 bg-gradient-to-r from-transparent to-gold" />
-                  <p className="font-serif-elegant text-[10px] sm:text-xs uppercase tracking-[0.4em] text-gold-deep">RSVP Details</p>
+                  <p className="font-serif-elegant text-[10px] sm:text-xs uppercase tracking-[0.4em] text-gold-deep">
+                    {isEdit ? "Edit Your RSVP" : "RSVP Details"}
+                  </p>
                   <span className="h-px w-8 bg-gradient-to-l from-transparent to-gold" />
                 </div>
                 <h3 className="font-display text-3xl sm:text-4xl text-gradient-royal leading-tight">
-                  Share Your Details
+                  {isEdit ? "Update Your Details" : "Share Your Details"}
                 </h3>
                 <p className="mt-2 font-serif-elegant text-xs sm:text-sm italic text-maroon/60">
+                  <Sparkles className="inline h-3 w-3 mr-1" />
                   Help us prepare for your warm presence
                 </p>
               </div>
 
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  onSubmit(data);
-                }}
-                className="space-y-5"
-              >
-                {/* Attending */}
-                <div>
-                  <label className="font-serif-elegant text-xs uppercase tracking-[0.25em] text-gold-deep flex items-center gap-2 mb-2">
-                    <Sparkles className="h-3.5 w-3.5" /> Will you attend?
-                  </label>
-                  <div className="grid grid-cols-2 gap-3">
-                    {(["yes", "no"] as const).map((v) => (
-                      <button
-                        type="button"
-                        key={v}
-                        onClick={() => setData((d) => ({ ...d, attending: v }))}
-                        className={`rounded-xl border-2 px-4 py-2.5 font-serif-elegant text-sm capitalize transition-all duration-300 ${
-                          data.attending === v
-                            ? "border-gold bg-gradient-to-br from-maroon to-vermilion text-ivory shadow-[0_6px_20px_rgba(107,33,33,0.35)]"
-                            : "border-gold/30 bg-ivory/60 text-maroon hover:border-gold/60"
-                        }`}
-                      >
-                        {v === "yes" ? "Yes, with joy" : "Sorry, no"}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {fields.map((f) => (
+                  <DynamicField key={f.id} field={f} value={data[f.id]}
+                    onChange={(v) => setData((d) => ({ ...d, [f.id]: v }))} />
+                ))}
 
-                {/* Guest count */}
-                <div>
-                  <label className="font-serif-elegant text-xs uppercase tracking-[0.25em] text-gold-deep flex items-center gap-2 mb-2">
-                    <Users className="h-3.5 w-3.5" /> Number of guests
-                  </label>
-                  <div className="flex items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setData((d) => ({ ...d, guestCount: Math.max(1, d.guestCount - 1) }))}
-                      className="h-10 w-10 rounded-full border-2 border-gold/40 bg-ivory text-maroon text-lg font-bold transition hover:bg-maroon hover:text-ivory"
-                    >−</button>
-                    <div className="flex-1 text-center font-display text-3xl text-gradient-royal py-2 rounded-xl border-2 border-gold/30 bg-ivory/60">
-                      {data.guestCount}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setData((d) => ({ ...d, guestCount: Math.min(20, d.guestCount + 1) }))}
-                      className="h-10 w-10 rounded-full border-2 border-gold/40 bg-ivory text-maroon text-lg font-bold transition hover:bg-maroon hover:text-ivory"
-                    >+</button>
-                  </div>
-                </div>
+                {error && (
+                  <p className="rounded-lg border border-vermilion/40 bg-vermilion/10 px-3 py-2 font-serif-elegant text-xs text-vermilion">{error}</p>
+                )}
 
-                {/* Events */}
-                <div>
-                  <label className="font-serif-elegant text-xs uppercase tracking-[0.25em] text-gold-deep mb-2 block">
-                    Events you will join
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {EVENT_OPTIONS.map((evt) => {
-                      const active = data.events.includes(evt);
-                      return (
-                        <button
-                          type="button"
-                          key={evt}
-                          onClick={() => toggleEvent(evt)}
-                          className={`rounded-xl border-2 px-3 py-2 font-serif-elegant text-sm transition-all duration-300 ${
-                            active
-                              ? "border-gold bg-gradient-to-br from-gold/30 to-kesar/20 text-maroon shadow-[0_4px_15px_rgba(212,175,55,0.3)]"
-                              : "border-gold/30 bg-ivory/60 text-maroon/70 hover:border-gold/60"
-                          }`}
-                        >
-                          {active ? "✓ " : ""}{evt}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Diet */}
-                <div>
-                  <label className="font-serif-elegant text-xs uppercase tracking-[0.25em] text-gold-deep flex items-center gap-2 mb-2">
-                    <Utensils className="h-3.5 w-3.5" /> Meal preference
-                  </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {(["veg", "non-veg", "jain"] as const).map((d) => (
-                      <button
-                        type="button"
-                        key={d}
-                        onClick={() => setData((s) => ({ ...s, diet: d }))}
-                        className={`rounded-xl border-2 px-2 py-2 font-serif-elegant text-xs sm:text-sm capitalize transition-all duration-300 ${
-                          data.diet === d
-                            ? "border-gold bg-gradient-to-br from-maroon to-vermilion text-ivory shadow-[0_4px_15px_rgba(107,33,33,0.3)]"
-                            : "border-gold/30 bg-ivory/60 text-maroon hover:border-gold/60"
-                        }`}
-                      >
-                        {d}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Note */}
-                <div>
-                  <label className="font-serif-elegant text-xs uppercase tracking-[0.25em] text-gold-deep mb-2 block">
-                    A message (optional)
-                  </label>
-                  <textarea
-                    value={data.note}
-                    onChange={(e) => setData((d) => ({ ...d, note: e.target.value }))}
-                    rows={3}
-                    placeholder="Your blessings or any special request…"
-                    className="w-full rounded-xl border-2 border-gold/30 bg-ivory/70 px-4 py-3 font-serif-elegant text-sm text-maroon placeholder:text-maroon/40 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/30 resize-none"
-                  />
-                </div>
-
-                {/* Submit */}
-                <motion.button
-                  type="submit"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.97 }}
+                <motion.button type="submit"
+                  whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                   className="w-full inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 font-serif-elegant text-base italic tracking-wider text-ivory shadow-[0_8px_24px_rgba(107,33,33,0.35)] transition-all"
-                  style={{ background: "linear-gradient(135deg, #6B2121 0%, #C0392B 50%, #D4AF37 100%)" }}
-                >
+                  style={{ background: "linear-gradient(135deg, #6B2121 0%, #C0392B 50%, #D4AF37 100%)" }}>
                   <Send className="h-4 w-4" />
-                  Submit RSVP
+                  {isEdit ? "Update RSVP" : "Submit RSVP"}
                 </motion.button>
               </form>
             </div>
