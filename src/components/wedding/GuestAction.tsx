@@ -659,11 +659,21 @@ const fadeUp  = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, tr
    MAIN COMPONENT
 ───────────────────────────────────────── */
 export function GuestAction() {
-  const [accepted, setAccepted] = useState(false);
+  // Resolve config from URL preview params (dev only). Once a real backend
+  // is connected, those URL values must be ignored — see rsvpConfig.ts.
+  const { config, previewScreen } = useMemo(() => {
+    if (typeof window === "undefined") return resolveRsvpConfig("");
+    return resolveRsvpConfig(window.location.search);
+  }, []);
+
+  const fields = config.form.fields;
+  const isDetailed = config.rsvpType === "detailed";
+
+  const [accepted, setAccepted] = useState(previewScreen !== "none");
   const [bursting, setBursting] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [rsvpData, setRsvpData] = useState<RsvpData>(DEFAULT_RSVP);
+  const [submitted, setSubmitted] = useState(previewScreen === "submitted");
+  const [rsvpData, setRsvpData] = useState<RsvpValues>(() => buildDefaults(fields));
   const cardRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -683,12 +693,15 @@ export function GuestAction() {
     setTimeout(() => {
       setAccepted(true);
       setBursting(false);
-      // Auto-open the RSVP form right after acceptance
-      setTimeout(() => setFormOpen(true), 900);
+      // Auto-open the form only for detailed RSVPs.
+      // Simple RSVPs end at the thank-you screen.
+      if (isDetailed) {
+        setTimeout(() => setFormOpen(true), 900);
+      }
     }, 3800);
   };
 
-  const handleFormSubmit = (data: RsvpData) => {
+  const handleFormSubmit = (data: RsvpValues) => {
     setRsvpData(data);
     setSubmitted(true);
     setFormOpen(false);
@@ -703,12 +716,16 @@ export function GuestAction() {
       }}
     >
       {bursting && <FireworksOverlay onDone={() => setBursting(false)} />}
-      <RsvpFormModal
-        open={formOpen}
-        initial={rsvpData}
-        onClose={() => setFormOpen(false)}
-        onSubmit={handleFormSubmit}
-      />
+      {isDetailed && (
+        <RsvpFormModal
+          open={formOpen}
+          initial={rsvpData}
+          fields={fields}
+          isEdit={submitted}
+          onClose={() => setFormOpen(false)}
+          onSubmit={handleFormSubmit}
+        />
+      )}
       <RoyalBackground idPrefix="ga" />
 
       <div className="relative mx-auto max-w-5xl z-10">
