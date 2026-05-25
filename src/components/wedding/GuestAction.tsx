@@ -613,24 +613,26 @@ function ThankYouScreen({
           </span>
         </motion.div>
 
-        {/* Submit / Edit RSVP CTA */}
-        <motion.button
-          onClick={onOpenForm}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.25, type: "spring", bounce: 0.4 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.96 }}
-          className="mt-2 inline-flex items-center gap-2 rounded-full px-7 py-3 font-serif-elegant text-sm italic tracking-wider text-ivory shadow-[0_8px_24px_rgba(107,33,33,0.35)] transition-all"
-          style={{
-            background: submitted
-              ? "linear-gradient(135deg, #D4AF37 0%, #C0392B 60%, #6B2121 100%)"
-              : "linear-gradient(135deg, #6B2121 0%, #C0392B 50%, #D4AF37 100%)",
-          }}
-        >
-          {submitted ? <Pencil className="h-4 w-4" /> : <Send className="h-4 w-4" />}
-          {submitted ? "Edit RSVP" : "Submit RSVP"}
-        </motion.button>
+        {/* Submit / Edit RSVP CTA — only when the form flow applies */}
+        {showCta && (!submitted || allowEdit) && (
+          <motion.button
+            onClick={onOpenForm}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.25, type: "spring", bounce: 0.4 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.96 }}
+            className="mt-2 inline-flex items-center gap-2 rounded-full px-7 py-3 font-serif-elegant text-sm italic tracking-wider text-ivory shadow-[0_8px_24px_rgba(107,33,33,0.35)] transition-all"
+            style={{
+              background: submitted
+                ? "linear-gradient(135deg, #D4AF37 0%, #C0392B 60%, #6B2121 100%)"
+                : "linear-gradient(135deg, #6B2121 0%, #C0392B 50%, #D4AF37 100%)",
+            }}
+          >
+            {submitted ? <Pencil className="h-4 w-4" /> : <Send className="h-4 w-4" />}
+            {submitted ? "Edit RSVP" : "Submit RSVP"}
+          </motion.button>
+        )}
 
         {submitted && (
           <motion.p
